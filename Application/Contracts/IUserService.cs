@@ -2,7 +2,7 @@
 
 namespace Application.Contracts;
 
-public interface IUsersService
+public interface IUserService
 {
     Task<UserDTO> UpdateInformation(UserDTO newUserInfo);
     Task Create(UserDTO newUser);

@@ -1,5 +1,6 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Domain.Enum;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -22,11 +23,11 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet()]
-    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotelsAsync()
+    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotelsAsync(Cities? city)
     {
         try
         {
-            return Ok(await _hotelsService.GetAll());
+            return Ok(await _hotelsService.GetFilteredHotels(city));
         }
         catch (Exception ex)
         {
