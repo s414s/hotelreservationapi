@@ -23,9 +23,10 @@ public class RoomsController : ControllerBase
     /// <param name="startDate"></param>
     /// <param name="endDate"></param>
     /// <param name="hotelId"></param>
+    /// <param name="isAvailable"></param>
     /// <returns></returns>
     [HttpGet("Available")]
-    public ActionResult<bool> GetAvailableRoomsAsync([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
+    public ActionResult<bool> GetFilteredRooms([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
     {
         try
         {
@@ -45,7 +46,7 @@ public class RoomsController : ControllerBase
     /// <param name="newRoom"></param>
     /// <returns></returns>
     [HttpPost()]
-    public async Task<ActionResult<bool>> CreateRoomAsync(long hotelId, [FromBody] RoomDTO newRoom)
+    public async Task<ActionResult<bool>> CreateRoom(long hotelId, [FromBody] RoomDTO newRoom)
     {
         try
         {
@@ -64,7 +65,7 @@ public class RoomsController : ControllerBase
     /// <param name="roomId"></param>
     /// <returns></returns>
     [HttpDelete("{roomId}")]
-    public async Task<ActionResult<bool>> DeleteRoomAsync(long roomId)
+    public async Task<ActionResult<bool>> DeleteRoom(long roomId)
     {
         try
         {

@@ -23,7 +23,7 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet()]
-    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotelsAsync(Cities? city)
+    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotels(Cities? city)
     {
         try
         {

@@ -26,7 +26,7 @@ public class BookingsController : ControllerBase
     /// <param name="end"></param>
     /// <returns></returns>
     [HttpGet()]
-    public async Task<ActionResult<BookingDTO>> GetFilteredBookingsAsync([FromQuery] long? hotelId, long? clientId, DateOnly start, DateOnly end)
+    public async Task<ActionResult<BookingDTO>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateOnly start, DateOnly end)
     {
         try
         {
@@ -46,6 +46,19 @@ public class BookingsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{bookingId}")]
     public ActionResult<BookingDTO> GetBookingById(long bookingId)
+    {
+        return new BookingDTO();
+    }
+
+    /// <summary>
+    /// Places a booking
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="until"></param>
+    /// <param name="guestIds"></param>
+    /// <returns></returns>
+    [HttpPost("{roomId}")]
+    public ActionResult<BookingDTO> CreateBooking(DateOnly from, DateOnly until, IEnumerable<long> guestIds)
     {
         return new BookingDTO();
     }
