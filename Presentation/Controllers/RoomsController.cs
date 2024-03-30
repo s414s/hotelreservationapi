@@ -25,11 +25,11 @@ public class RoomsController : ControllerBase
     /// <param name="hotelId"></param>
     /// <returns></returns>
     [HttpGet("Available")]
-    public async Task<ActionResult<bool>> GetAvailableRoomsAsync([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
+    public ActionResult<bool> GetAvailableRoomsAsync([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
     {
         try
         {
-            return Ok(await _roomService.GetFilteredRooms(startDate, endDate, hotelId, isAvailable));
+            return Ok(_roomService.GetFilteredRooms(startDate, endDate, hotelId, isAvailable));
         }
         catch (Exception ex)
         {

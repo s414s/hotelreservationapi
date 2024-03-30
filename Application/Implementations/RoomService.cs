@@ -36,9 +36,12 @@ public class RoomService : IRoomService
         return await _roomsRepo.SaveChanges();
     }
 
-    public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(DateOnly from, DateOnly until, Guid? hotelId, bool? isAvailable)
+    public IEnumerable<RoomDTO> GetFilteredRooms(DateOnly from, DateOnly until, long? hotelId, bool? isAvailable)
     {
-        var rooms = await _roomsRepo.GetAll()
-            .Where(x => hotelId == null || x.Id == hotelId);
+        return _roomsRepo.Query
+            .Where(x => hotelId == null || x.Id == hotelId)
+            .Where(x => isAvailable == null || x.IsAvailableBetweenDates(from, until) == isAvailable)
+            .Select(x => RoomDTO.MapFromDomainEntity(x))
+            ;
     }
 }
