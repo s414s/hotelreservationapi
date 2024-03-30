@@ -1,9 +1,31 @@
-﻿namespace Application.DTOs;
+﻿using Domain.Entities;
+using Domain.Enum;
+
+namespace Application.DTOs;
 
 public class UserDTO
 {
-    public string Email { get; init; } = String.Empty;
-    public string Name { get; init; } = String.Empty;
-    public string Surname { get; init; } = String.Empty;
-    public string Address { get; init; } = String.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Surname { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+
+    public User MapToDomainEntity()
+    {
+        return new User
+        {
+            Name = Name,
+            Surname = Surname,
+            Role = Enum.Parse<Roles>(Role, true),
+        };
+    }
+
+    public static UserDTO MapFromDomainEntity(User user)
+    {
+        return new UserDTO
+        {
+            Name = user.Name,
+            Surname = user.Surname,
+            Role = user.Role.ToString(),
+        };
+    }
 }
