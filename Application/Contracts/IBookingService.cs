@@ -4,8 +4,8 @@ namespace Application.Contracts;
 
 public interface IBookingService
 {
-    IEnumerable<BookingDTO> GetAll();
-    void BookRoom(Guid roomId, IEnumerable<string> guestNames, DateOnly from, DateOnly until);
-    void DeleteBooking(Guid bookingId);
-    IEnumerable<BookingDTO> GetBookingsOfMonth(int month, int year, Guid? hotelId);
+    Task<IEnumerable<BookingDTO>> GetAll();
+    Task<bool> BookRoom(Guid roomId, IEnumerable<string> guestNames, DateOnly from, DateOnly until);
+    Task<bool> DeleteBooking(Guid bookingId);
+    Task<IEnumerable<BookingDTO>> GetBookingsOfMonth(int month, int year, Guid? hotelId);
 }
