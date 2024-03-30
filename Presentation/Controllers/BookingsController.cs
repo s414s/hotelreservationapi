@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Contracts;
+using Application.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
@@ -6,13 +8,21 @@ namespace Presentation.Controllers;
 [Route("[controller]")]
 public class BookingsController : ControllerBase
 {
-    private readonly IBookingsService _ordersService;
+    private readonly IBookingService _bookingService;
     private readonly ILogger<BookingsController> _logger;
+
+    public BookingsController(IBookingService bookingService, ILogger<BookingsController> logger)
+    {
+        _bookingService = bookingService;
+        _logger = logger;
+    }
 
     /// <summary>
     /// Gets filtered bookings
     /// </summary>
-    /// <param name="bookingId"></param>
+    /// <param name="hotelId"></param>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
     /// <returns></returns>
     [HttpGet()]
     public ActionResult<BookingDTO> GetFilteredBookings([FromQuery] long hotelId, DateOnly start, DateOnly end)

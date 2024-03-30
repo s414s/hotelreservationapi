@@ -4,7 +4,7 @@ namespace Application.Contracts;
 
 public interface IUsersService
 {
-    Task<UserDTO> GetActiveUser();
     Task<UserDTO> UpdateInformation(UserDTO newUserInfo);
-    Task UpdateRole(Role newRole, int targetUserId);
+    Task Create(UserDTO newUser);
+    Task Delete(UserDTO user);
 }

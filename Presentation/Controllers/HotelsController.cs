@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Contracts;
+using Application.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
@@ -6,20 +8,25 @@ namespace Presentation.Controllers;
 [Route("[controller]")]
 public class HotelsController : ControllerBase
 {
-    private readonly IHotelsService _hotelsService;
+    private readonly IHotelService _hotelsService;
     private readonly ILogger<AuthController> _logger;
+
+    public HotelsController(IHotelService hotelsService, ILogger<AuthController> logger)
+    {
+        _hotelsService = hotelsService;
+        _logger = logger;
+    }
 
     /// <summary>
     /// Gets filteres hotels
     /// </summary>
     /// <returns></returns>
     [HttpGet()]
-    public ActionResult<IEnumerable<HotelDTO>> GetHotels()
+    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotelsAsync()
     {
         try
         {
-            
-            return Ok(_hotelsService.GetAll());
+            return Ok(await _hotelsService.GetAll());
         }
         catch (Exception ex)
         {

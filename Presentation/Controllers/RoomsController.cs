@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Contracts;
+using Application.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
@@ -6,8 +8,14 @@ namespace Presentation.Controllers;
 [Route("[controller]")]
 public class RoomsController : ControllerBase
 {
-    private readonly IRoomsService _roomsService;
+    private readonly IRoomService _roomService;
     private readonly ILogger<RoomsController> _logger;
+
+    public RoomsController(IRoomService roomService, ILogger<RoomsController> logger)
+    {
+        _roomService = roomService;
+        _logger = logger;
+    }
 
     /// <summary>
     /// Provides available rooms in a range of dates
@@ -17,9 +25,16 @@ public class RoomsController : ControllerBase
     /// <param name="hotelId"></param>
     /// <returns></returns>
     [HttpGet("Available")]
-    public ActionResult<bool> GetAvailableItems([FromQuery] DateTime startDate, DateTime endDate, Guid hotelId)
+    public async Task<ActionResult<bool>> GetAvailableRoomsAsync([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId)
     {
-        return true;
+        try
+        {
+            return Ok(await _roomService.GetAvailableRoomsOnDate(startDate, endDate, hotelId));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
@@ -28,12 +43,12 @@ public class RoomsController : ControllerBase
     /// <param name="newItem"></param>
     /// <returns></returns>
     [HttpPost()]
-    public ActionResult<bool> CreateItem(int modelId, [FromBody] RoomDTO newRoom)
+    public async Task<ActionResult<bool>> CreateRoomAsync(long hotelId, [FromBody] RoomDTO newRoom)
     {
         try
         {
-            _roomsService.CreateItem(newRoom, modelId);
-            return Ok(true);
+            
+            return Ok(await _roomService.CreateRoom(newRoom, hotelId));
         }
         catch (Exception ex)
         {
@@ -47,12 +62,11 @@ public class RoomsController : ControllerBase
     /// <param name="roomId"></param>
     /// <returns></returns>
     [HttpDelete("{roomId}")]
-    public ActionResult<bool> CreateItem(long roomId)
+    public async Task<ActionResult<bool>> DeleteRoomAsync(long roomId)
     {
         try
         {
-            _roomsService.DeleteItem(roomId);
-            return Ok(true);
+            return Ok(await _roomService.DeleteRoom(roomId));
         }
         catch (Exception ex)
         {
