@@ -20,10 +20,10 @@ public class RoomsController : ControllerBase
     /// <summary>
     /// Provides filtered rooms
     /// </summary>
-    /// <param name="startDate"></param>
-    /// <param name="endDate"></param>
-    /// <param name="hotelId"></param>
-    /// <param name="isAvailable"></param>
+    /// <param name="startDate">Start date</param>
+    /// <param name="endDate">End date</param>
+    /// <param name="hotelId">Hotel id</param>
+    /// <param name="isAvailable">Is Available</param>
     /// <returns></returns>
     [HttpGet("Available")]
     public ActionResult<bool> GetFilteredRooms([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
@@ -42,8 +42,8 @@ public class RoomsController : ControllerBase
     /// <summary>
     /// Creates a new room
     /// </summary>
-    /// <param name="hotelId"></param>
-    /// <param name="newRoom"></param>
+    /// <param name="hotelId">Hotel id</param>
+    /// <param name="newRoom">New Room information</param>
     /// <returns></returns>
     [HttpPost()]
     public async Task<ActionResult<bool>> CreateRoom(long hotelId, [FromBody] RoomDTO newRoom)

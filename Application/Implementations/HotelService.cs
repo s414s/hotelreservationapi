@@ -15,8 +15,11 @@ public class HotelService : IHotelService
         _hotelsRepo = hotelsRepo;
     }
 
-    public Task<IEnumerable<HotelDTO>> GetFilteredHotels(Cities? city)
+    public IEnumerable<HotelDTO> GetFilteredHotels(Cities? city)
     {
-        throw new NotImplementedException();
+        return _hotelsRepo.Query
+            .Where(x => city == null || x.Address.Contains(city.ToString()))
+            .Select(x => HotelDTO.MapFromDomainEntity(x))
+            ;
     }
 }
