@@ -8,39 +8,37 @@ namespace Application.Implementations;
 public class RoomService : IRoomService
 {
     private readonly IRepository<Hotel> _hotelsRepo;
+    private readonly IRepository<Room> _roomsRepo;
 
-    public RoomService(IRepository<Hotel> hotelsRepo)
+    public RoomService(IRepository<Hotel> hotelsRepo, IRepository<Room> roomsRepo)
     {
         _hotelsRepo = hotelsRepo;
+        _roomsRepo = roomsRepo;
     }
 
-    public async void CreateRoom(RoomDTO newRoom, Guid hotelId)
+    public async Task<bool> CreateRoom(RoomDTO newRoom, long hotelId)
     {
         var hotel = await _hotelsRepo.GetByID(hotelId)
             ?? throw new ApplicationException("the hotel does not exist");
 
-        hotel.Rooms = hotel.Rooms.Append(newRoom.MapToDomainEntity()).ToList();
+        var room = newRoom.MapToDomainEntity();
 
-        _hotelsRepo.SaveChanges();
+        await _roomsRepo.Add(room);
+        return await _roomsRepo.SaveChanges();
     }
 
-    public async void DeleteRoom(RoomDTO room)
+    public async Task<bool> DeleteRoom(long roomId)
     {
-        var hotel = await _hotelsRepo
-            .GetAll()
-            .FirstOrDefault(x => x.Rooms.Any(x => x.Id == room.Id))
+        var room = await _roomsRepo.GetByID(roomId)
             ?? throw new ApplicationException("the room does not exist");
 
-        hotel.Rooms = hotel.Rooms.Where(x => x.Id != room.Id).ToList();
-        _hotelsRepo.SaveChanges();
+        await _roomsRepo.Delete(room.Id);
+        return await _roomsRepo.SaveChanges();
     }
 
-    public async IEnumerable<RoomDTO> GetAvailableRoomsOnDate(DateOnly from, DateOnly until, Guid? hotelId)
+    public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(DateOnly from, DateOnly until, Guid? hotelId, bool? isAvailable)
     {
-        return await _hotelsRepo.GetAll()
-            .Where(x => hotelId == null || x.Id == hotelId)
-            .SelectMany(x => x.Rooms)
-            .Where(x => x.IsAvailableBetweenDates(from, until))
-            .Select(x => RoomDTO.MapFromDomainEntity(x));
+        var rooms = await _roomsRepo.GetAll()
+            .Where(x => hotelId == null || x.Id == hotelId);
     }
 }

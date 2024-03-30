@@ -18,40 +18,42 @@ public class RoomsController : ControllerBase
     }
 
     /// <summary>
-    /// Provides available rooms in a range of dates
+    /// Provides filtered rooms
     /// </summary>
     /// <param name="startDate"></param>
     /// <param name="endDate"></param>
     /// <param name="hotelId"></param>
     /// <returns></returns>
     [HttpGet("Available")]
-    public async Task<ActionResult<bool>> GetAvailableRoomsAsync([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId)
+    public async Task<ActionResult<bool>> GetAvailableRoomsAsync([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
     {
         try
         {
-            return Ok(await _roomService.GetAvailableRoomsOnDate(startDate, endDate, hotelId));
+            return Ok(await _roomService.GetFilteredRooms(startDate, endDate, hotelId, isAvailable));
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
             return BadRequest(ex.Message);
         }
     }
 
     /// <summary>
-    /// Creates a new Room
+    /// Creates a new room
     /// </summary>
-    /// <param name="newItem"></param>
+    /// <param name="hotelId"></param>
+    /// <param name="newRoom"></param>
     /// <returns></returns>
     [HttpPost()]
     public async Task<ActionResult<bool>> CreateRoomAsync(long hotelId, [FromBody] RoomDTO newRoom)
     {
         try
         {
-            
             return Ok(await _roomService.CreateRoom(newRoom, hotelId));
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
             return BadRequest(ex.Message);
         }
     }
@@ -70,6 +72,7 @@ public class RoomsController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
             return BadRequest(ex.Message);
         }
     }

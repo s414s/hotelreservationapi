@@ -1,5 +1,6 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Application.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -25,9 +26,17 @@ public class BookingsController : ControllerBase
     /// <param name="end"></param>
     /// <returns></returns>
     [HttpGet()]
-    public ActionResult<BookingDTO> GetFilteredBookings([FromQuery] long hotelId, DateOnly start, DateOnly end)
+    public async Task<ActionResult<BookingDTO>> GetFilteredBookingsAsync([FromQuery] long? hotelId, long? clientId, DateOnly start, DateOnly end)
     {
-        return new BookingDTO();
+        try
+        {
+            return Ok(await _bookingService.GetFilteredBookings(start, end, hotelId, clientId));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest(ex);
+        }
     }
 
     /// <summary>
@@ -35,21 +44,10 @@ public class BookingsController : ControllerBase
     /// </summary>
     /// <param name="bookingId"></param>
     /// <returns></returns>
-    [HttpGet("{orderId}")]
+    [HttpGet("{bookingId}")]
     public ActionResult<BookingDTO> GetBookingById(long bookingId)
     {
         return new BookingDTO();
-    }
-
-    /// <summary>
-    /// Gets all bookings associated to a client
-    /// </summary>
-    /// <param name="clientId"></param>
-    /// <returns></returns>
-    [HttpGet("client/{clientId}")]
-    public ActionResult<BookingsByClientDTO> GetOrdersByClient(long clientId)
-    {
-        return new BookingsByClientDTO();
     }
 
     /// <summary>
@@ -58,7 +56,7 @@ public class BookingsController : ControllerBase
     /// <param name="bookingId"></param>
     /// <returns></returns>
     [HttpDelete("{bookingId}")]
-    public ActionResult<bool> DeleteOrderById(long bookingId)
+    public ActionResult<bool> DeleteBooking(long bookingId)
     {
         return true;
     }
