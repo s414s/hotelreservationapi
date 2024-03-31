@@ -33,9 +33,13 @@ builder.Services.AddScoped<IRepository<Hotel>, HotelsRepository>();
 builder.Services.AddScoped<IRepository<Room>, RoomsRepository>();
 builder.Services.AddScoped<IRepository<User>, UsersRepository>();
 
-var Configuration = builder.Configuration;
-builder.Services.AddDbContext<DatabaseContext>(options =>
-        options.UseNpgsql(Configuration.GetConnectionString("WebApiDatabase")));
+builder.Services.AddEntityFrameworkNpgsql()
+    .AddDbContext<DatabaseContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
+
+//var Configuration = builder.Configuration;
+//builder.Services.AddDbContext<DatabaseContext>(options =>
+//        options.UseNpgsql(Configuration.GetConnectionString("WebApiDatabase")));
 
 // Or if you have a common repository implementation, you can register it as a generic service
 //builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
