@@ -1,24 +1,23 @@
-﻿using Domain.Contracts;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Implementations;
 
-public class UsersRepository : IRepository<User>
+public class GuestsRepository
 {
     private readonly DatabaseContext _context;
 
-    public UsersRepository(DatabaseContext context)
+    public GuestsRepository(DatabaseContext context)
     {
         _context = context;
     }
 
-    public IQueryable<User> Query => _context.Users;
+    public IQueryable<Guest> Query => _context.Guests;
 
-    public async Task<bool> Add(User entity)
+    public async Task<bool> Add(Guest entity)
     {
-        await _context.Users.AddAsync(entity);
+        await _context.Guests.AddAsync(entity);
         return await SaveChanges();
     }
 
@@ -29,18 +28,18 @@ public class UsersRepository : IRepository<User>
         {
             return true;
         }
-        _context.Users.Remove(entity);
+        _context.Guests.Remove(entity);
         return await SaveChanges();
     }
 
-    public async Task<IEnumerable<User>> GetAll()
+    public async Task<IEnumerable<Guest>> GetAll()
     {
-        return await _context.Users.ToListAsync();
+        return await _context.Guests.ToListAsync();
     }
 
-    public async Task<User?> GetByID(long entityId)
+    public async Task<Guest?> GetByID(long entityId)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.Id == entityId);
+        return await _context.Guests.FirstOrDefaultAsync(x => x.Id == entityId);
     }
 
     public async Task<bool> SaveChanges()
@@ -48,9 +47,9 @@ public class UsersRepository : IRepository<User>
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> Update(User entity)
+    public async Task<bool> Update(Guest entity)
     {
-        _context.Users.Update(entity);
+        _context.Guests.Update(entity);
         return await SaveChanges();
     }
 }
