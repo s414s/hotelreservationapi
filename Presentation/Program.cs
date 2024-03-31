@@ -2,6 +2,9 @@ using Application.Contracts;
 using Application.Implementations;
 using Domain.Contracts;
 using Domain.Entities;
+using Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +25,16 @@ builder.Services.AddSwaggerGen();
 // Add repos
 //builder.Services.AddScoped<IRepository<User>, UserR>();
 
+var Configuration = builder.Configuration;
+builder.Services.AddDbContext<DatabaseContext>(options =>
+        options.UseNpgsql(Configuration.GetConnectionString("WebApiDatabase")));
+
 // Or if you have a common repository implementation, you can register it as a generic service
 //builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
 var app = builder.Build();
+
+// ===================================
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
