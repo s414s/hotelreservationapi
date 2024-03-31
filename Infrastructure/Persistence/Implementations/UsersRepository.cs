@@ -38,9 +38,9 @@ public class UsersRepository : IRepository<User>
         return await _context.Users.ToListAsync();
     }
 
-    public async Task<User?> GetByID(long entityId)
+    public async Task<User> GetByID(long entityId)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.Id == entityId);
+        return await _context.Users.SingleAsync(x => x.Id == entityId);
     }
 
     public async Task<bool> SaveChanges()

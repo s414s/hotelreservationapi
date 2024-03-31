@@ -5,20 +5,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Implementations;
 
-public class GuestsRepository : IRepository<Guest>
+public class HotelsRepository : IRepository<Hotel>
 {
     private readonly DatabaseContext _context;
 
-    public GuestsRepository(DatabaseContext context)
+    public HotelsRepository(DatabaseContext context)
     {
         _context = context;
     }
 
-    public IQueryable<Guest> Query => _context.Guests;
+    public IQueryable<Hotel> Query => _context.Hotels;
 
-    public async Task<bool> Add(Guest entity)
+    public async Task<bool> Add(Hotel entity)
     {
-        await _context.Guests.AddAsync(entity);
+        await _context.Hotels.AddAsync(entity);
         return await SaveChanges();
     }
 
@@ -29,18 +29,18 @@ public class GuestsRepository : IRepository<Guest>
         {
             return true;
         }
-        _context.Guests.Remove(entity);
+        _context.Hotels.Remove(entity);
         return await SaveChanges();
     }
 
-    public async Task<IEnumerable<Guest>> GetAll()
+    public async Task<IEnumerable<Hotel>> GetAll()
     {
-        return await _context.Guests.ToListAsync();
+        return await _context.Hotels.ToListAsync();
     }
 
-    public async Task<Guest> GetByID(long entityId)
+    public async Task<Hotel> GetByID(long entityId)
     {
-        return await _context.Guests.SingleAsync(x => x.Id == entityId);
+        return await _context.Hotels.SingleAsync(x => x.Id == entityId);
     }
 
     public async Task<bool> SaveChanges()
@@ -48,9 +48,9 @@ public class GuestsRepository : IRepository<Guest>
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> Update(Guest entity)
+    public async Task<bool> Update(Hotel entity)
     {
-        _context.Guests.Update(entity);
+        _context.Hotels.Update(entity);
         return await SaveChanges();
     }
 }
