@@ -8,7 +8,9 @@ public class Guest : Entity
     public string DNI { get; set; }
 
     // Navigation properties
-    public virtual ICollection<Booking>? Bookings { get; set; }
+    public long BookingId { get; set; }
+    public Booking Booking { get; set; }
+
     public Guest() { }
     public Guest(string name, string dni)
     {

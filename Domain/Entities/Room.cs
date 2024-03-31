@@ -9,6 +9,7 @@ public class Room : Entity
     public RoomTypes Type { get; set; }
 
     // Navigation properties
+    public long HotelId { get; set; }
     public virtual Hotel? Hotel { get; set; }
     public ICollection<Booking>? Bookings { get; set; }
 

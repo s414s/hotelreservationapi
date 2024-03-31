@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Enum;
+using Infrastructure.Persistence.EntityConfigurators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -32,6 +33,13 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new BookingEntityConfigurator());
+        modelBuilder.ApplyConfiguration(new GuestEntityConfigurator());
+        modelBuilder.ApplyConfiguration(new HotelEntityConfigurator());
+        modelBuilder.ApplyConfiguration(new RoomEntityConfigurator());
+        modelBuilder.ApplyConfiguration(new UserEntityConfigurator());
+        
+
         // TODO hashear contraseñas
         modelBuilder.Entity<User>().HasData([
             new User("alberto", "salas", "root", Roles.Admin),
