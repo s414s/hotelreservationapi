@@ -6,6 +6,9 @@ using Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 
+// config info
+// https://medium.com/@saisiva249/how-to-configure-postgres-database-for-a-net-a2ee38f29372
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

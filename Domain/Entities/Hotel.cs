@@ -5,8 +5,8 @@ namespace Domain.Entities;
 
 public class Hotel : Entity
 {
-    public required string Name { get; set; }
-    public required string Address { get; set; }
+    public string Name { get; set; }
+    public string Address { get; set; }
     public Cities City { get; set; }
 
     // Navigation properties
@@ -15,8 +15,8 @@ public class Hotel : Entity
     public Hotel() { }
     public Hotel(string name, string address, Cities city)
     {
-        Name = name;
-        Address = address;
+        Name = name.ToLower();
+        Address = address.ToLower();
     }
 
     public IEnumerable<Room> GetAvailableRoomsBetweenDates(DateOnly start, DateOnly end)
