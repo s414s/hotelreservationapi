@@ -3,6 +3,7 @@ using Application.Implementations;
 using Domain.Contracts;
 using Domain.Entities;
 using Infrastructure.Persistence.Context;
+using Infrastructure.Persistence.Implementations;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -19,14 +20,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add services
-//builder.Services.AddScoped<IAuthService, AuthService>();
-//builder.Services.AddScoped<IBookingService, BookingService>();
-//builder.Services.AddScoped<IHotelService, HotelService>();
-//builder.Services.AddScoped<IRoomService, RoomService>();
-//builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add repos
-//builder.Services.AddScoped<IRepository<User>, UserR>();
+builder.Services.AddScoped<IRepository<Booking>, BookingsRepository>();
+builder.Services.AddScoped<IRepository<Guest>, GuestsRepository>();
+builder.Services.AddScoped<IRepository<Hotel>, HotelsRepository>();
+builder.Services.AddScoped<IRepository<Room>, RoomsRepository>();
+builder.Services.AddScoped<IRepository<User>, UsersRepository>();
 
 var Configuration = builder.Configuration;
 builder.Services.AddDbContext<DatabaseContext>(options =>
