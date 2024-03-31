@@ -8,7 +8,7 @@ public class UserDTO
     public long Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Surname { get; set; } = string.Empty;
-    public string Role { get; set; } = string.Empty;
+    public Roles Role { get; set; }
 
     public User MapToDomainEntity()
     {
@@ -16,7 +16,7 @@ public class UserDTO
         {
             Name = Name,
             Surname = Surname,
-            Role = Enum.Parse<Roles>(Role, true),
+            Role = Role,
         };
     }
 
@@ -27,7 +27,7 @@ public class UserDTO
             Id = user.Id,
             Name = user.Name,
             Surname = user.Surname,
-            Role = user.Role.ToString(),
+            Role = user.Role,
         };
     }
 }

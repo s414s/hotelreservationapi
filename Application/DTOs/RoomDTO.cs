@@ -17,7 +17,7 @@ public class RoomDTO
             Id = room.Id,
             Storey = room.Storey,
             Type = room.Type.ToString(),
-            Capacity = room.Capacity,
+            Capacity = room.GetCapacity(),
         };
     }
 

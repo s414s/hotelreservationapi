@@ -34,7 +34,7 @@ public class BookingService : IBookingService
         if (guests.Count == 0 || guestIds.Count() != guests.Count)
             throw new ApplicationException("not all the guests exist");
 
-        if (room.Capacity < guests.Count)
+        if (room.GetCapacity() < guests.Count)
             throw new ApplicationException("the room is not big enough for the nr of guests");
 
         await _bookingsRepo.Add(new Booking(from, until, guests));
