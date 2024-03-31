@@ -1,39 +1,51 @@
 ﻿using Domain.Contracts;
 using Domain.Entities;
+using Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Implementations;
 
 public class UsersRepository : IRepository<User>
 {
-    public IQueryable<User> Query => throw new NotImplementedException();
+    private readonly DatabaseContext _context;
 
-    public Task<bool> Add(User entity)
+    public UsersRepository(DatabaseContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public Task<bool> Delete(long entityId)
+    public IQueryable<User> Query => _context.Users;
+
+    public async Task<bool> Add(User entity)
     {
-        throw new NotImplementedException();
+        await _context.Users.AddAsync(entity);
+        return await SaveChanges();
     }
 
-    public Task<IEnumerable<User>> GetAll()
+    public async Task<bool> Delete(long entityId)
     {
-        throw new NotImplementedException();
+        await _context.Users.ExecuteDeleteAsync();
+        return await SaveChanges();
     }
 
-    public Task<User?> GetByID(long entityId)
+    public async Task<IEnumerable<User>> GetAll()
     {
-        throw new NotImplementedException();
+        return await _context.Users.ToListAsync();
     }
 
-    public Task<bool> SaveChanges()
+    public async Task<User?> GetByID(long entityId)
     {
-        throw new NotImplementedException();
+        return await _context.Users.FirstOrDefaultAsync(x => x.Id == entityId);
     }
 
-    public Task<bool> Update(User entity)
+    public async Task<bool> SaveChanges()
     {
-        throw new NotImplementedException();
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> Update(User entity)
+    {
+        _context.Users.Update(entity);
+        return await SaveChanges();
     }
 }

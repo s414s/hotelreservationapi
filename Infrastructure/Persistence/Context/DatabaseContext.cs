@@ -9,6 +9,7 @@ public class DatabaseContext : DbContext
 {
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
+    //    se inyecta la configuración para poder leer el connection string desde ella
     //    protected readonly IConfiguration Configuration;
     //    public DatabaseContext(IConfiguration configuration)
     //    {
@@ -31,23 +32,39 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // TODO hashear contraseñas
         modelBuilder.Entity<User>().HasData([
             new User("alberto", "salas", "root", Roles.Admin),
             new User("ana", "sanz", "root", Roles.User),
             ]);
 
         modelBuilder.Entity<Hotel>().HasData([
-            new Hotel("boston", "c/las torres", Cities.Zaragoza),
-            new Hotel("altamira", "c/los olmos", Cities.Madrid),
+            new Hotel{Id = 1, Name = "boston", Address = "c/las torres", City = Cities.Zaragoza, Rooms = [
+                    new Room(1, RoomTypes.Single),
+                    new Room(1, RoomTypes.Single),
+                    new Room(1, RoomTypes.Double),
+                    new Room(1, RoomTypes.Double),
+                ]},
+            new Hotel{Id = 2, Name = "altamira", Address = "c/los olmos", City = Cities.Madrid, Rooms = [
+                    new Room(1, RoomTypes.Single),
+                    new Room(1, RoomTypes.Single),
+                    new Room(1, RoomTypes.Double),
+                    new Room(1, RoomTypes.Double),
+                ]},
             ]);
 
-        // TODO - hotel como clave externa
-        modelBuilder.Entity<Room>().HasData([
-            new Room(1, RoomTypes.Single),
-            new Room(1, RoomTypes.Single),
-            new Room(1, RoomTypes.Double),
-            new Room(1, RoomTypes.Double),
-            ]);
+        //// TODO - hotel como clave externa
+        //modelBuilder.Entity<Room>().HasData([
+        //    new Room(1, RoomTypes.Single),
+        //    new Room(1, RoomTypes.Single),
+        //    new Room(1, RoomTypes.Double),
+        //    new Room(1, RoomTypes.Double),
+
+        //    new Room(1, RoomTypes.Single),
+        //    new Room(1, RoomTypes.Double),
+        //    new Room(1, RoomTypes.Suite),
+        //    new Room(1, RoomTypes.Suite),
+        //    ]);
 
         modelBuilder.Entity<Guest>().HasData([
             new Guest("alfonso", "34455645F"),
