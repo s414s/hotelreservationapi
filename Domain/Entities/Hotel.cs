@@ -17,6 +17,7 @@ public class Hotel : Entity
     {
         Name = name.ToLower();
         Address = address.ToLower();
+        City = city;
     }
 
     public IEnumerable<Room> GetAvailableRoomsBetweenDates(DateOnly start, DateOnly end)
