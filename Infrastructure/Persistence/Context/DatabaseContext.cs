@@ -40,44 +40,27 @@ public class DatabaseContext : DbContext
         modelBuilder.ApplyConfiguration(new RoomEntityConfigurator());
         modelBuilder.ApplyConfiguration(new UserEntityConfigurator());
         
-
         // TODO hashear contraseñas
         modelBuilder.Entity<User>().HasData([
-            new User("alberto", "salas", "root", Roles.Admin),
-            new User("ana", "sanz", "root", Roles.User),
+            new User{ Id = 1, Name = "alberto", Surname = "salas", Password = "root", Role = Roles.Admin },
+            new User{ Id = 2, Name = "ana", Surname = "sanz", Password = "root", Role = Roles.Admin },
             ]);
 
         modelBuilder.Entity<Hotel>().HasData([
-            new Hotel{Id = 1, Name = "boston", Address = "c/las torres", City = Cities.Zaragoza, Rooms = [
-                    new Room(1, RoomTypes.Single),
-                    new Room(1, RoomTypes.Single),
-                    new Room(1, RoomTypes.Double),
-                    new Room(1, RoomTypes.Double),
-                ]},
-            new Hotel{Id = 2, Name = "altamira", Address = "c/los olmos", City = Cities.Madrid, Rooms = [
-                    new Room(1, RoomTypes.Single),
-                    new Room(1, RoomTypes.Single),
-                    new Room(1, RoomTypes.Double),
-                    new Room(1, RoomTypes.Double),
-                ]},
+            new Hotel{Id = 1, Name = "boston", Address = "c/las torres", City = Cities.Zaragoza},
+            new Hotel{Id = 2, Name = "altamira", Address = "c/los olmos", City = Cities.Madrid},
             ]);
 
-        //// TODO - hotel como clave externa
-        //modelBuilder.Entity<Room>().HasData([
-        //    new Room(1, RoomTypes.Single),
-        //    new Room(1, RoomTypes.Single),
-        //    new Room(1, RoomTypes.Double),
-        //    new Room(1, RoomTypes.Double),
+        modelBuilder.Entity<Room>().HasData([
+            new Room{ Id = 1, Storey = 1, Type = RoomTypes.Single, HotelId = 1 },
+            new Room{ Id = 2, Storey = 1, Type = RoomTypes.Single, HotelId = 1 },
+            new Room{ Id = 3, Storey = 1, Type = RoomTypes.Double, HotelId = 1 },
+            new Room{ Id = 4, Storey = 1, Type = RoomTypes.Double, HotelId = 1 },
 
-        //    new Room(1, RoomTypes.Single),
-        //    new Room(1, RoomTypes.Double),
-        //    new Room(1, RoomTypes.Suite),
-        //    new Room(1, RoomTypes.Suite),
-        //    ]);
-
-        modelBuilder.Entity<Guest>().HasData([
-            new Guest("alfonso", "34455645F"),
-            new Guest("maria", "34455645K"),
+            new Room{ Id = 5, Storey = 1, Type = RoomTypes.Single, HotelId = 2 },
+            new Room{ Id = 6, Storey = 1, Type = RoomTypes.Single, HotelId = 2 },
+            new Room{ Id = 7, Storey = 1, Type = RoomTypes.Double, HotelId = 2 },
+            new Room{ Id = 8, Storey = 1, Type = RoomTypes.Suite, HotelId = 2 },
             ]);
 
         //base.OnModelCreating(modelBuilder);
