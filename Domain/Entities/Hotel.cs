@@ -1,17 +1,19 @@
 ﻿using Domain.Base;
-using System.Net;
+using Domain.Enum;
 
 namespace Domain.Entities;
 
 public class Hotel : Entity
 {
-    public string Name { get; set; }
-    public string Address { get; set; }
-    public IEnumerable<Room> Rooms { get; set; } = [];
-    public IEnumerable<User> Users { get; set; } = [];
+    public required string Name { get; set; }
+    public required string Address { get; set; }
+    public Cities City { get; set; }
+
+    // Navigation properties
+    public ICollection<Room>? Rooms { get; set; }
 
     public Hotel() { }
-    public Hotel(string name, string address)
+    public Hotel(string name, string address, Cities city)
     {
         Name = name;
         Address = address;

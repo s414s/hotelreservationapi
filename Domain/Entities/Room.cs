@@ -1,6 +1,5 @@
 ﻿using Domain.Base;
 using Domain.Enum;
-using System.Text.Json.Serialization;
 
 namespace Domain.Entities;
 
@@ -8,9 +7,10 @@ public class Room : Entity
 {
     public int Storey { get; set; }
     public RoomTypes Type { get; set; }
-    //public IEnumerable<Booking> Bookings { get; set; } = [];
-    [JsonIgnore]
-    public int Capacity { get => Type == RoomTypes.Single ? 1 : 2; }
+
+    // Navigation properties
+    public virtual Hotel? Hotel { get; set; }
+    public ICollection<Booking>? Bookings { get; set; }
 
     public Room() { }
     public Room(int storey, RoomTypes type = RoomTypes.Single)
@@ -19,11 +19,8 @@ public class Room : Entity
         Type = type;
     }
 
-    // Access properties
-    public virtual long HotelId { get; set; }
-    public virtual ICollection<Booking> Bookings { get; set; }
-
     public bool IsAvailableBetweenDates(DateOnly start, DateOnly end)
         => !Bookings.Any(x => x.Start >= start && x.End <= end);
 
+    public int GetCapacity() => Type == RoomTypes.Single ? 1 : 2;
 }

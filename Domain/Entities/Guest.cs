@@ -4,14 +4,15 @@ namespace Domain.Entities;
 
 public class Guest : Entity
 {
-    public string Name { get; init; } = String.Empty;
-    public string Address { get; init; } = String.Empty;
-    public string DNI { get; init; } = String.Empty;
+    public required string Name { get; set; }
+    public required string DNI { get; set; }
+
+    // Navigation properties
+    public virtual ICollection<Booking>? Bookings { get; set; }
     public Guest() { }
-    public Guest(string name, string address, string dni)
+    public Guest(string name, string dni)
     {
         Name = name;
-        Address = address;
         DNI = dni;
     }
 }
