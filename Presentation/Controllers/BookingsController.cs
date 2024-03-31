@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Contracts;
+using Application.DTOs;
+using Application.Implementations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
@@ -6,18 +9,34 @@ namespace Presentation.Controllers;
 [Route("[controller]")]
 public class BookingsController : ControllerBase
 {
-    private readonly IBookingsService _ordersService;
+    private readonly IBookingService _bookingService;
     private readonly ILogger<BookingsController> _logger;
+
+    public BookingsController(IBookingService bookingService, ILogger<BookingsController> logger)
+    {
+        _bookingService = bookingService;
+        _logger = logger;
+    }
 
     /// <summary>
     /// Gets filtered bookings
     /// </summary>
-    /// <param name="bookingId"></param>
+    /// <param name="hotelId"></param>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
     /// <returns></returns>
     [HttpGet()]
-    public ActionResult<BookingDTO> GetFilteredBookings([FromQuery] long hotelId, DateOnly start, DateOnly end)
+    public async Task<ActionResult<BookingDTO>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateOnly start, DateOnly end)
     {
-        return new BookingDTO();
+        try
+        {
+            return Ok(await _bookingService.GetFilteredBookings(start, end, hotelId, clientId));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest(ex);
+        }
     }
 
     /// <summary>
@@ -25,21 +44,23 @@ public class BookingsController : ControllerBase
     /// </summary>
     /// <param name="bookingId"></param>
     /// <returns></returns>
-    [HttpGet("{orderId}")]
+    [HttpGet("{bookingId}")]
     public ActionResult<BookingDTO> GetBookingById(long bookingId)
     {
         return new BookingDTO();
     }
 
     /// <summary>
-    /// Gets all bookings associated to a client
+    /// Places a booking
     /// </summary>
-    /// <param name="clientId"></param>
+    /// <param name="from"></param>
+    /// <param name="until"></param>
+    /// <param name="guestIds"></param>
     /// <returns></returns>
-    [HttpGet("client/{clientId}")]
-    public ActionResult<BookingsByClientDTO> GetOrdersByClient(long clientId)
+    [HttpPost("{roomId}")]
+    public ActionResult<BookingDTO> CreateBooking(DateOnly from, DateOnly until, IEnumerable<long> guestIds)
     {
-        return new BookingsByClientDTO();
+        return new BookingDTO();
     }
 
     /// <summary>
@@ -48,7 +69,7 @@ public class BookingsController : ControllerBase
     /// <param name="bookingId"></param>
     /// <returns></returns>
     [HttpDelete("{bookingId}")]
-    public ActionResult<bool> DeleteOrderById(long bookingId)
+    public ActionResult<bool> DeleteBooking(long bookingId)
     {
         return true;
     }

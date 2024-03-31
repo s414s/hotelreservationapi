@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Contracts;
+using Application.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
@@ -6,37 +8,53 @@ namespace Presentation.Controllers;
 [Route("[controller]")]
 public class RoomsController : ControllerBase
 {
-    private readonly IRoomsService _roomsService;
+    private readonly IRoomService _roomService;
     private readonly ILogger<RoomsController> _logger;
 
-    /// <summary>
-    /// Provides available rooms in a range of dates
-    /// </summary>
-    /// <param name="startDate"></param>
-    /// <param name="endDate"></param>
-    /// <param name="hotelId"></param>
-    /// <returns></returns>
-    [HttpGet("Available")]
-    public ActionResult<bool> GetAvailableItems([FromQuery] DateTime startDate, DateTime endDate, Guid hotelId)
+    public RoomsController(IRoomService roomService, ILogger<RoomsController> logger)
     {
-        return true;
+        _roomService = roomService;
+        _logger = logger;
     }
 
     /// <summary>
-    /// Creates a new Room
+    /// Provides filtered rooms
     /// </summary>
-    /// <param name="newItem"></param>
+    /// <param name="startDate">Start date</param>
+    /// <param name="endDate">End date</param>
+    /// <param name="hotelId">Hotel id</param>
+    /// <param name="isAvailable">Is Available</param>
     /// <returns></returns>
-    [HttpPost()]
-    public ActionResult<bool> CreateItem(int modelId, [FromBody] RoomDTO newRoom)
+    [HttpGet("Available")]
+    public ActionResult<bool> GetFilteredRooms([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
     {
         try
         {
-            _roomsService.CreateItem(newRoom, modelId);
-            return Ok(true);
+            return Ok(_roomService.GetFilteredRooms(startDate, endDate, hotelId, isAvailable));
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Creates a new room
+    /// </summary>
+    /// <param name="hotelId">Hotel id</param>
+    /// <param name="newRoom">New Room information</param>
+    /// <returns></returns>
+    [HttpPost()]
+    public async Task<ActionResult<bool>> CreateRoom(long hotelId, [FromBody] RoomDTO newRoom)
+    {
+        try
+        {
+            return Ok(await _roomService.CreateRoom(newRoom, hotelId));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
             return BadRequest(ex.Message);
         }
     }
@@ -47,15 +65,15 @@ public class RoomsController : ControllerBase
     /// <param name="roomId"></param>
     /// <returns></returns>
     [HttpDelete("{roomId}")]
-    public ActionResult<bool> CreateItem(long roomId)
+    public async Task<ActionResult<bool>> DeleteRoom(long roomId)
     {
         try
         {
-            _roomsService.DeleteItem(roomId);
-            return Ok(true);
+            return Ok(await _roomService.DeleteRoom(roomId));
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
             return BadRequest(ex.Message);
         }
     }

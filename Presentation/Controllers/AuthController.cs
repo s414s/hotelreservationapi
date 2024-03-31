@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Contracts;
+using Application.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
@@ -20,12 +22,11 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("me")]
-    public ActionResult<bool> GetActiveUser()
+    public ActionResult<UserDTO> GetActiveUser()
     {
         try
         {
-            _authService.GetActiveUser(); // TODO
-            return Ok(true);
+            return Ok(_authService.GetActiveUser());
         }
         catch (Exception ex)
         {

@@ -2,9 +2,8 @@
 
 namespace Application.Contracts;
 
-public interface IUsersService
+public interface IUserService
 {
-    Task<UserDTO> GetActiveUser();
-    Task<UserDTO> UpdateInformation(UserDTO newUserInfo);
-    Task UpdateRole(Role newRole, int targetUserId);
+    Task<bool> Create(UserDTO newUser);
+    Task<bool> Delete(long userId);
 }

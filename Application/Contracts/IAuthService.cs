@@ -7,5 +7,5 @@ public interface IAuthService
     Task Login(LoginDTO loginInfo);
     Task Logout();
     Task SignUp(SignupDTO signupInfo);
-    Task GetActiveUser(int userId);
+    Task<UserDTO> GetActiveUser();
 }
