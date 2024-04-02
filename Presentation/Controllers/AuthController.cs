@@ -37,7 +37,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -57,7 +58,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -67,16 +69,17 @@ public class AuthController : ControllerBase
     /// <returns></returns>
     [AllowAnonymous]
     [HttpGet("logout")]
-    public ActionResult<bool> Logout()
+    public async Task<IActionResult> LogoutAsync()
     {
         try
         {
-            _authService.Logout();
-            return Ok(true);
+            await _authService.Logout();
+            return Ok();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -95,7 +98,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
