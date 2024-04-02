@@ -18,6 +18,7 @@ public class AuthController : ControllerBase
         ILogger<AuthController> logger)
     {
         _authService = authService;
+        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
     }
 
@@ -49,6 +50,7 @@ public class AuthController : ControllerBase
         try
         {
             var jwtToken = await _authService.Login(loginInfo);
+            _httpContextAccessor.HttpContext.Response.Headers.Add("Authorization", $"Bearer {jwtToken}");
             return Ok(new { token = jwtToken });
         }
         catch (Exception ex)
