@@ -1,7 +1,6 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
 using Domain.Contracts;
-using Domain.Entities;
 
 namespace Application.Implementations;
 

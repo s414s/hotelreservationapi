@@ -1,7 +1,9 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
 using Domain.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
@@ -23,6 +25,8 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet()]
+    //[Authorize(Roles = "User")]
+    [Authorize]
     public ActionResult<IEnumerable<HotelDTO>> GetHotels([FromQuery] Cities? city)
     {
         try

@@ -4,7 +4,7 @@ namespace Application.Contracts;
 
 public interface IAuthService
 {
-    Task Login(LoginDTO loginInfo);
+    Task<string> Login(LoginDTO loginInfo);
     Task Logout();
     Task SignUp(SignupDTO signupInfo);
     Task<UserDTO> GetActiveUser();

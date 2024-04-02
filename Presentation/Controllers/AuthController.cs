@@ -9,9 +9,13 @@ namespace Presentation.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(
+        IAuthService authService,
+        IHttpContextAccessor httpContextAccessor,
+        ILogger<AuthController> logger)
     {
         _authService = authService;
         _logger = logger;
@@ -40,12 +44,13 @@ public class AuthController : ControllerBase
     /// <param name="loginInfo"></param>
     /// <returns></returns>
     [HttpPost("login")]
-    public ActionResult<bool> Login([FromBody] LoginDTO loginInfo)
+    public ActionResult<object> Login([FromBody] LoginDTO loginInfo)
     {
         try
         {
-            _authService.Login(loginInfo);
-            return Ok(true);
+            var jwtToken = _authService.Login(loginInfo);
+            //_httpContextAccessor.HttpContext.Response.Headers["Authorization"] = jwtToken.Value;
+            return Ok(new { token = jwtToken });
         }
         catch (Exception ex)
         {
