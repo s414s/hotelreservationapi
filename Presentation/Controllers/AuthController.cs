@@ -1,5 +1,6 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -26,6 +27,7 @@ public class AuthController : ControllerBase
     /// Gets active user info
     /// </summary>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpGet("me")]
     public ActionResult<UserDTO> GetActiveUser()
     {
@@ -63,6 +65,7 @@ public class AuthController : ControllerBase
     /// Logout
     /// </summary>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpGet("logout")]
     public ActionResult<bool> Logout()
     {
