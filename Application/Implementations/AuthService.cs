@@ -6,6 +6,7 @@ using Domain.Enum;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -83,6 +84,8 @@ public class AuthService : IAuthService
             signingCredentials: credentials
         );
 
+        var payload = token.Payload;
+
         // Serialize token to string
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
@@ -108,6 +111,33 @@ public class AuthService : IAuthService
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        // ===============
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        // TODO - private claims
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()), // user id
+            new Claim(JwtRegisteredClaimNames.Iss, _jwtIssuer), // issuer
+            new Claim(JwtRegisteredClaimNames.Aud, _jwtAudience), // audience
+            new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()), // issued at time
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // jwt id
+            new Claim("role", role.ToString()),
+        };
+
+        var testOfJWT = new JwtSecurityToken(
+            issuer: _jwtIssuer,
+            audience: _jwtAudience,
+            claims: claims,
+            expires: DateTime.Now.AddHours(1), // Token expiration time
+            signingCredentials: credentials);
+
+        var payloaddd = testOfJWT.Payload;
+        var tokenazo = tokenHandler.WriteToken(testOfJWT);
+
+        // ===============
         return tokenHandler.WriteToken(token);
     }
 

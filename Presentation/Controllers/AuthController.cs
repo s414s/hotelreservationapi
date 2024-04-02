@@ -44,12 +44,11 @@ public class AuthController : ControllerBase
     /// <param name="loginInfo"></param>
     /// <returns></returns>
     [HttpPost("login")]
-    public ActionResult<object> Login([FromBody] LoginDTO loginInfo)
+    public async Task<ActionResult<object>> LoginAsync([FromBody] LoginDTO loginInfo)
     {
         try
         {
-            var jwtToken = _authService.Login(loginInfo);
-            //_httpContextAccessor.HttpContext.Response.Headers["Authorization"] = jwtToken.Value;
+            var jwtToken = await _authService.Login(loginInfo);
             return Ok(new { token = jwtToken });
         }
         catch (Exception ex)
