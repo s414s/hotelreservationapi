@@ -8,10 +8,10 @@ namespace Application.Implementations;
 
 public class RoomService : IRoomService
 {
-    private readonly IRepository<Room> _hotelsRepo;
+    private readonly IRepository<Hotel> _hotelsRepo;
     private readonly IRepository<Room> _roomsRepo;
 
-    public RoomService(IRepository<Room> hotelsRepo, IRepository<Room> roomsRepo)
+    public RoomService(IRepository<Hotel> hotelsRepo, IRepository<Room> roomsRepo)
     {
         _hotelsRepo = hotelsRepo;
         _roomsRepo = roomsRepo;
