@@ -7,7 +7,7 @@ public class RoomDTO
 {
     public long Id { get; set; }
     public int Storey { get; set; }
-    public string Type { get; set; }
+    public RoomTypes Type { get; set; }
     public int Capacity { get; set; }
 
     public static RoomDTO MapFromDomainEntity(Room room)
@@ -16,10 +16,10 @@ public class RoomDTO
         {
             Id = room.Id,
             Storey = room.Storey,
-            Type = room.Type.ToString(),
+            Type = room.Type,
             Capacity = room.GetCapacity(),
         };
     }
 
-    public Room MapToDomainEntity() => new(Storey, Enum.Parse<RoomTypes>(Type, true));
+    public Room MapToDomainEntity() => new(Storey, Type);
 }

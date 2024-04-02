@@ -2,6 +2,7 @@
 using Application.DTOs;
 using Domain.Contracts;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementations;
 
@@ -22,6 +23,7 @@ public class RoomService : IRoomService
             ?? throw new ApplicationException("the hotel does not exist");
 
         var room = newRoom.MapToDomainEntity();
+        room.HotelId = hotel.Id;
 
         await _roomsRepo.Add(room);
         return await _roomsRepo.SaveChanges();
@@ -36,12 +38,13 @@ public class RoomService : IRoomService
         return await _roomsRepo.SaveChanges();
     }
 
-    public IEnumerable<RoomDTO> GetFilteredRooms(DateOnly from, DateOnly until, long? hotelId, bool? isAvailable)
+    public IEnumerable<RoomDTO> GetFilteredRooms(DateOnly? from, DateOnly? until, long? hotelId, bool? isAvailable)
     {
         return _roomsRepo.Query
-            .Where(x => hotelId == null || x.Id == hotelId)
-            .Where(x => isAvailable == null || x.IsAvailableBetweenDates(from, until) == isAvailable)
-            .Select(x => RoomDTO.MapFromDomainEntity(x))
-            ;
+            .Include(x => x.Bookings)
+            .Where(x => hotelId == null || x.HotelId == hotelId)
+            .Where(x => (isAvailable == null || from == null || until == null)
+                || x.IsAvailableBetweenDates((DateOnly)from, (DateOnly)until) == isAvailable)
+            .Select(x => RoomDTO.MapFromDomainEntity(x));
     }
 }

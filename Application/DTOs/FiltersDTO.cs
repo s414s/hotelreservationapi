@@ -9,5 +9,6 @@ public class FiltersDTO
     public Cities? City { get; set; }
     public long? HotelId { get; set; }
     public long? ClientId { get; set; }
-    public string? guestDNI { get; set; }
+    public string? GuestDNI { get; set; }
+    public bool? IsAvailable { get; set; }
 }

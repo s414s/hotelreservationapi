@@ -23,4 +23,10 @@ public class HotelService : IHotelService
             .Where(x => city == null || x.City == city)
             .Select(x => HotelDTO.MapFromDomainEntity(x));
     }
+
+    public async Task<HotelDTO> GetById(long hotelId)
+    {
+        var hotel = await _hotelsRepo.GetByID(hotelId);
+        return HotelDTO.MapFromDomainEntity(hotel);
+    }
 }

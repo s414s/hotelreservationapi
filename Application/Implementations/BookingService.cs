@@ -8,16 +8,13 @@ namespace Application.Implementations;
 
 public class BookingService : IBookingService
 {
-    private readonly IRepository<Hotel> _hotelsRepo;
     private readonly IRepository<Booking> _bookingsRepo;
     private readonly IRepository<Room> _roomsRepo;
 
     public BookingService(
-        IRepository<Hotel> hotelsRepo,
         IRepository<Booking> bookingsRepo,
         IRepository<Room> roomsRepo)
     {
-        _hotelsRepo = hotelsRepo;
         _bookingsRepo = bookingsRepo;
         _roomsRepo = roomsRepo;
     }
