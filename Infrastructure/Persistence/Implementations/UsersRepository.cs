@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Implementations;
 
-public class UsersRepository : IRepository<User>
+public class UsersRepository : IUsersRepository
 {
     private readonly DatabaseContext _context;
 
@@ -36,6 +36,13 @@ public class UsersRepository : IRepository<User>
     public async Task<IEnumerable<User>> GetAll()
     {
         return await _context.Users.ToListAsync();
+    }
+
+    public Task<User?> GetByCredentials(string username, string password)
+    {
+        return _context.Users
+            .SingleOrDefaultAsync(x => x.GetUsername() == username
+                && x.Password == password);
     }
 
     public async Task<User> GetByID(long entityId)

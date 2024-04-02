@@ -7,30 +7,37 @@ namespace Application.Implementations;
 
 public class AuthService : IAuthService
 {
-    private readonly IRepository<User> _usersRepo;
+    private readonly IUsersRepository _usersRepo;
 
-    public AuthService(IRepository<User> usersRepo)
+    public AuthService(IUsersRepository usersRepo)
     {
         _usersRepo = usersRepo;
     }
 
     public Task<UserDTO> GetActiveUser()
     {
+        // TODO - leer info del JWT
         throw new NotImplementedException();
     }
 
-    public Task Login(LoginDTO loginInfo)
+    public async Task Login(LoginDTO loginInfo)
     {
-        throw new NotImplementedException();
+        var user = await _usersRepo.GetByCredentials(loginInfo.Username, loginInfo.Password)
+            ?? throw new ApplicationException("username or password are not correct");
+
+        // TODO - crear y devolver el Bearer JWT
     }
 
     public Task Logout()
     {
+        // TODO - borrar info del Bearer
         throw new NotImplementedException();
     }
 
-    public Task SignUp(SignupDTO signupInfo)
+    public async Task SignUp(SignupDTO signupInfo)
     {
-        throw new NotImplementedException();
+        var newUser = new User(signupInfo.Name, signupInfo.Surname, signupInfo.Password);
+        await _usersRepo.Add(newUser);
+        await _usersRepo.SaveChanges();
     }
 }

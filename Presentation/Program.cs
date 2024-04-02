@@ -31,7 +31,7 @@ builder.Services.AddScoped<IRepository<Booking>, BookingsRepository>();
 builder.Services.AddScoped<IRepository<Guest>, GuestsRepository>();
 builder.Services.AddScoped<IRepository<Hotel>, HotelsRepository>();
 builder.Services.AddScoped<IRepository<Room>, RoomsRepository>();
-builder.Services.AddScoped<IRepository<User>, UsersRepository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
 //builder.Services.AddEntityFrameworkNpgsql()
 //    .AddDbContext<DatabaseContext>(options =>

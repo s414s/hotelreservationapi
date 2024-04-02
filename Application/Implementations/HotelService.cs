@@ -3,6 +3,7 @@ using Application.DTOs;
 using Domain.Contracts;
 using Domain.Entities;
 using Domain.Enum;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementations;
 
@@ -18,8 +19,8 @@ public class HotelService : IHotelService
     public IEnumerable<HotelDTO> GetFilteredHotels(Cities? city)
     {
         return _hotelsRepo.Query
-            .Where(x => city == null || x.Address.Contains(city.ToString()))
-            .Select(x => HotelDTO.MapFromDomainEntity(x))
-            ;
+            .Include(x => x.Rooms)
+            .Where(x => city == null || x.City == city)
+            .Select(x => HotelDTO.MapFromDomainEntity(x));
     }
 }

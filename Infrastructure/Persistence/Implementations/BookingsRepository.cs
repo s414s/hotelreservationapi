@@ -35,12 +35,16 @@ public class BookingsRepository : IRepository<Booking>
 
     public async Task<IEnumerable<Booking>> GetAll()
     {
-        return await _context.Bookings.ToListAsync();
+        return await _context.Bookings
+            .Include(x => x.Guests)
+            .ToListAsync();
     }
 
     public async Task<Booking> GetByID(long entityId)
     {
-        return await _context.Bookings.SingleAsync(x => x.Id == entityId);
+        return await _context.Bookings
+            .Include(x => x.Guests)
+            .SingleAsync(x => x.Id == entityId);
     }
 
     public async Task<bool> SaveChanges()

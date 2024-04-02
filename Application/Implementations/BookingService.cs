@@ -2,26 +2,27 @@
 using Application.DTOs;
 using Domain.Contracts;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementations;
 
 public class BookingService : IBookingService
 {
+    private readonly IRepository<Hotel> _hotelsRepo;
     private readonly IRepository<Booking> _bookingsRepo;
     private readonly IRepository<Room> _roomsRepo;
-    private readonly IRepository<Guest> _guestsRepo;
 
     public BookingService(
+        IRepository<Hotel> hotelsRepo,
         IRepository<Booking> bookingsRepo,
-        IRepository<Guest> guestsRepo,
         IRepository<Room> roomsRepo)
     {
+        _hotelsRepo = hotelsRepo;
         _bookingsRepo = bookingsRepo;
-        _guestsRepo = guestsRepo;
         _roomsRepo = roomsRepo;
     }
 
-    public async Task<bool> BookRoom(long roomId, IEnumerable<long> guestIds, DateOnly from, DateOnly until)
+    public async Task<bool> BookRoom(long roomId, IEnumerable<GuestDTO> guests, DateOnly from, DateOnly until)
     {
         var room = await _roomsRepo.GetByID(roomId)
             ?? throw new ApplicationException("the room does not exist");
@@ -29,15 +30,10 @@ public class BookingService : IBookingService
         if (!room.IsAvailableBetweenDates(from, until))
             throw new ApplicationException("the room is not available on those dates");
 
-        var guests = _guestsRepo.Query.Where(x => guestIds.Contains(x.Id)).ToList();
+        if (room.GetCapacity() < guests.Count())
+            throw new ApplicationException("the room is not big enough for the number of guests");
 
-        if (guests.Count == 0 || guestIds.Count() != guests.Count)
-            throw new ApplicationException("not all the guests exist");
-
-        if (room.GetCapacity() < guests.Count)
-            throw new ApplicationException("the room is not big enough for the nr of guests");
-
-        await _bookingsRepo.Add(new Booking(from, until, guests));
+        await _bookingsRepo.Add(new Booking(from, until, guests.Select(x => x.MapToDomainEntity()).ToList()));
         return await _bookingsRepo.SaveChanges();
     }
 
@@ -50,13 +46,17 @@ public class BookingService : IBookingService
         return await _bookingsRepo.SaveChanges();
     }
 
-    public Task<IEnumerable<BookingDTO>> GetAll()
+    public async Task<IEnumerable<BookingDTO>> GetFilteredBookings(DateOnly? from, DateOnly? until, long? hotelId, long? roomId, string? guestDNI)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<BookingDTO>> GetFilteredBookings(DateOnly from, DateOnly until, long? hotelId, long? clientId)
-    {
-        throw new NotImplementedException();
+        return await _bookingsRepo.Query
+            .Include(b => b.Guests)
+            .Include(b => b.Room)
+            .Where(b => guestDNI == null || b.Guests.Any(x => x.DNI == guestDNI))
+            .Where(b => hotelId == null || b.Room.HotelId == hotelId)
+            .Where(b => roomId == null || b.RoomId == roomId)
+            .Where(b => from == null || b.Start >= from)
+            .Where(b => until == null || b.End >= until)
+            .Select(x => BookingDTO.MapFromDomainEntity(x))
+            .ToListAsync();
     }
 }

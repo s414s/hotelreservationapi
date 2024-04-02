@@ -14,6 +14,12 @@ public class Guest : Entity
     public Guest() { }
     public Guest(string name, string dni)
     {
+        if (string.IsNullOrEmpty(name))
+            throw new ApplicationException("name can not be empty");
+
+        if (string.IsNullOrEmpty(dni))
+            throw new ApplicationException("dni can not be empty");
+
         Name = name.ToLower();
         DNI = dni;
     }
