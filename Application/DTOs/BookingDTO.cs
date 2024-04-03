@@ -7,8 +7,7 @@ public class BookingDTO
     public long Id { get; set; }
     public DateOnly From { get; set; }
     public DateOnly Until { get; set; }
-    public IEnumerable<string> GuestNames { get; set; } = [];
-    public string HotelName { get; set; } = string.Empty;
+    public IEnumerable<GuestDTO> Guests { get; set; } = [];
     public static BookingDTO MapFromDomainEntity(Booking booking)
     {
         return new BookingDTO
@@ -16,7 +15,17 @@ public class BookingDTO
             Id = booking.Id,
             From = booking.Start,
             Until = booking.End,
-            GuestNames = booking.Guests.Select(g => g.Name),
+            Guests = booking.Guests?.Select(g => GuestDTO.MapFromDomainEntity(g)) ?? [],
+        };
+    }
+
+    public Booking MapToDomainEntity()
+    {
+        return new Booking
+        {
+            Start = From,
+            End = Until,
+            Guests = Guests.Select(x => x.MapToDomainEntity()).ToList(),
         };
     }
 }

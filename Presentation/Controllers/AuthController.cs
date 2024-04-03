@@ -53,7 +53,8 @@ public class AuthController : ControllerBase
         try
         {
             var jwtToken = await _authService.Login(loginInfo);
-            _httpContextAccessor.HttpContext.Response.Headers.Add("Authorization", $"Bearer {jwtToken}");
+            _httpContextAccessor.HttpContext.Response.Headers.Add("Authorization", $"bearer {jwtToken}");
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", jwtToken, new CookieOptions { HttpOnly = true });
             return Ok(new { token = jwtToken });
         }
         catch (Exception ex)

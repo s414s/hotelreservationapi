@@ -1,6 +1,5 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
-using Application.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -30,7 +29,8 @@ public class BookingsController : ControllerBase
     {
         try
         {
-            return Ok(await _bookingService.GetFilteredBookings(start, end, hotelId, clientId, guestDNI));
+            var filters = new FiltersDTO { HotelId = hotelId, ClientId = clientId, From = start, Until = end, GuestDNI = guestDNI };
+            return Ok(await _bookingService.GetFilteredBookings(filters));
         }
         catch (Exception ex)
         {
@@ -40,27 +40,25 @@ public class BookingsController : ControllerBase
     }
 
     /// <summary>
-    /// Gets an specific booking
-    /// </summary>
-    /// <param name="bookingId"></param>
-    /// <returns></returns>
-    [HttpGet("{bookingId}")]
-    public ActionResult<BookingDTO> GetBookingById(long bookingId)
-    {
-        return new BookingDTO();
-    }
-
-    /// <summary>
     /// Places a booking
     /// </summary>
-    /// <param name="from"></param>
-    /// <param name="until"></param>
-    /// <param name="guestIds"></param>
+    /// <param name="roomId"></param>
+    /// <param name="booking"></param>
     /// <returns></returns>
     [HttpPost("{roomId}")]
-    public ActionResult<BookingDTO> CreateBooking(DateOnly from, DateOnly until, IEnumerable<long> guestIds)
+    public async Task<ActionResult<bool>> CreateBooking(long roomId, [FromBody] BookingDTO booking)
     {
-        return new BookingDTO();
+        try
+        {
+            booking.Id = 0;
+            var result = await _bookingService.BookRoom(roomId, booking);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest(false);
+        }
     }
 
     /// <summary>
@@ -69,8 +67,17 @@ public class BookingsController : ControllerBase
     /// <param name="bookingId"></param>
     /// <returns></returns>
     [HttpDelete("{bookingId}")]
-    public ActionResult<bool> DeleteBooking(long bookingId)
+    public async Task<ActionResult<bool>> DeleteBooking(long bookingId)
     {
-        return true;
+        try
+        {
+            var result = await _bookingService.DeleteBooking(bookingId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest(false);
+        }
     }
 }

@@ -19,18 +19,21 @@ public class BookingService : IBookingService
         _roomsRepo = roomsRepo;
     }
 
-    public async Task<bool> BookRoom(long roomId, IEnumerable<GuestDTO> guests, DateOnly from, DateOnly until)
+    public async Task<bool> BookRoom(long roomId, BookingDTO booking)
     {
         var room = await _roomsRepo.GetByID(roomId)
             ?? throw new ApplicationException("the room does not exist");
 
-        if (!room.IsAvailableBetweenDates(from, until))
+        if (!room.IsAvailableBetweenDates(booking.From, booking.Until))
             throw new ApplicationException("the room is not available on those dates");
 
-        if (room.GetCapacity() < guests.Count())
+        if (room.GetCapacity() < booking.Guests.Count())
             throw new ApplicationException("the room is not big enough for the number of guests");
 
-        await _bookingsRepo.Add(new Booking(from, until, guests.Select(x => x.MapToDomainEntity()).ToList()));
+        var newBooking = booking.MapToDomainEntity();
+        newBooking.RoomId = roomId;
+
+        await _bookingsRepo.Add(newBooking);
         return await _bookingsRepo.SaveChanges();
     }
 
@@ -43,17 +46,18 @@ public class BookingService : IBookingService
         return await _bookingsRepo.SaveChanges();
     }
 
-    public async Task<IEnumerable<BookingDTO>> GetFilteredBookings(DateOnly? from, DateOnly? until, long? hotelId, long? roomId, string? guestDNI)
+    //public async Task<IEnumerable<BookingDTO>> GetFilteredBookings(DateOnly? from, DateOnly? until, long? hotelId, long? roomId, string? guestDNI)
+    public async Task<IEnumerable<BookingDTO>> GetFilteredBookings(FiltersDTO filters)
     {
         return await _bookingsRepo.Query
             .Include(b => b.Guests)
             .Include(b => b.Room)
-            .Where(b => guestDNI == null || b.Guests.Any(x => x.DNI == guestDNI))
-            .Where(b => hotelId == null || b.Room.HotelId == hotelId)
-            .Where(b => roomId == null || b.RoomId == roomId)
-            .Where(b => from == null || b.Start >= from)
-            .Where(b => until == null || b.End >= until)
-            .Select(x => BookingDTO.MapFromDomainEntity(x))
+            .Where(b => filters.GuestDNI == null || b.Guests.Any(x => x.DNI == filters.GuestDNI))
+            .Where(b => filters.HotelId == null || b.Room.HotelId == filters.HotelId)
+            .Where(b => filters.RoomId == null || b.RoomId == filters.RoomId)
+            .Where(b => filters.From == null || b.Start >= filters.From)
+            .Where(b => filters.Until == null || b.End >= filters.Until)
+            .Select(b => BookingDTO.MapFromDomainEntity(b))
             .ToListAsync();
     }
 }

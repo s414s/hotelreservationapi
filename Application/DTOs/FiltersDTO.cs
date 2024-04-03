@@ -8,6 +8,7 @@ public class FiltersDTO
     public DateOnly? Until { get; set; }
     public Cities? City { get; set; }
     public long? HotelId { get; set; }
+    public long? RoomId { get; set; }
     public long? ClientId { get; set; }
     public string? GuestDNI { get; set; }
     public bool? IsAvailable { get; set; }
