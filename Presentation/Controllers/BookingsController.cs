@@ -50,7 +50,6 @@ public class BookingsController : ControllerBase
     {
         try
         {
-            booking.Id = 0;
             var result = await _bookingService.BookRoom(roomId, booking);
             return Ok(result);
         }
@@ -71,8 +70,7 @@ public class BookingsController : ControllerBase
     {
         try
         {
-            var result = await _bookingService.DeleteBooking(bookingId);
-            return Ok(result);
+            return Ok(await _bookingService.DeleteBooking(bookingId));
         }
         catch (Exception ex)
         {
