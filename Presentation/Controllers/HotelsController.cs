@@ -24,9 +24,9 @@ public class HotelsController : ControllerBase
     /// Gets filteres hotels
     /// </summary>
     /// <returns></returns>
-    [HttpGet()]
     //[Authorize(Roles = "User")]
     [Authorize]
+    [HttpGet()]
     public ActionResult<IEnumerable<HotelDTO>> GetHotels([FromQuery] Cities? city)
     {
         try
@@ -45,8 +45,8 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <param name="hotelId"></param>
     /// <returns></returns>
-    [HttpGet("{hotelId}")]
     [Authorize]
+    [HttpGet("{hotelId}")]
     public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotelsAsync(long hotelId)
     {
         try
@@ -65,8 +65,8 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <param name="hotelInfo"></param>
     /// <returns></returns>
-    [HttpPost()]
     [Authorize]
+    [HttpPost()]
     public async Task<ActionResult<bool>> CreateHotel([FromBody] HotelDTO hotelInfo)
     {
         try

@@ -30,7 +30,8 @@ public class RoomsController : ControllerBase
     {
         try
         {
-            return Ok(await _roomService.GetFilteredRooms(startDate, endDate, hotelId, isAvailable));
+            var filter = new FiltersDTO { From = startDate, Until = endDate, HotelId = hotelId, IsAvailable = isAvailable };
+            return Ok(await _roomService.GetFilteredRooms(filter));
         }
         catch (Exception ex)
         {
@@ -69,6 +70,7 @@ public class RoomsController : ControllerBase
     {
         try
         {
+            updatedRoom.Id = roomId;
             return Ok(await _roomService.UpdateRoom(updatedRoom));
         }
         catch (Exception ex)
