@@ -25,11 +25,19 @@ public class BookingsController : ControllerBase
     /// <param name="end"></param>
     /// <returns></returns>
     [HttpGet()]
-    public async Task<ActionResult<BookingDTO>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateOnly? start, DateOnly? end, string? guestDNI)
+    public async Task<ActionResult<BookingDTO>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateTime? start, DateTime? end, string? guestDNI)
     {
         try
         {
-            var filters = new FiltersDTO { HotelId = hotelId, ClientId = clientId, From = start, Until = end, GuestDNI = guestDNI };
+            var filters = new FiltersDTO
+            {
+                HotelId = hotelId,
+                ClientId = clientId,
+                From = start is DateTime from ? DateOnly.FromDateTime(from) : null,
+                Until = end is DateTime until ? DateOnly.FromDateTime(until) : null,
+                GuestDNI = guestDNI
+            };
+
             return Ok(await _bookingService.GetFilteredBookings(filters));
         }
         catch (Exception ex)

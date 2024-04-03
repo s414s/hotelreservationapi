@@ -26,12 +26,19 @@ public class RoomsController : ControllerBase
     /// <param name="isAvailable">Is Available</param>
     /// <returns></returns>
     [HttpGet("Available")]
-    public async Task<ActionResult<List<RoomDTO>>> GetFilteredRoomsAsync([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
+    public async Task<ActionResult<List<RoomDTO>>> GetFilteredRoomsAsync([FromQuery] DateTime startDate, DateTime endDate, long? hotelId, bool? isAvailable)
     {
         try
         {
-            var filter = new FiltersDTO { From = startDate, Until = endDate, HotelId = hotelId, IsAvailable = isAvailable };
-            return Ok(await _roomService.GetFilteredRooms(filter));
+            var filters = new FiltersDTO
+            {
+                HotelId = hotelId,
+                IsAvailable = isAvailable,
+                From = startDate is DateTime from ? DateOnly.FromDateTime(from) : null,
+                Until = endDate is DateTime until ? DateOnly.FromDateTime(until) : null,
+            };
+
+            return Ok(await _roomService.GetFilteredRooms(filters));
         }
         catch (Exception ex)
         {
