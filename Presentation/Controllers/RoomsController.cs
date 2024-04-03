@@ -26,16 +26,16 @@ public class RoomsController : ControllerBase
     /// <param name="isAvailable">Is Available</param>
     /// <returns></returns>
     [HttpGet("Available")]
-    public ActionResult<bool> GetFilteredRooms([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
+    public async Task<ActionResult<List<RoomDTO>>> GetFilteredRoomsAsync([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
     {
         try
         {
-            return Ok(_roomService.GetFilteredRooms(startDate, endDate, hotelId, isAvailable));
+            return Ok(await _roomService.GetFilteredRooms(startDate, endDate, hotelId, isAvailable));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -55,7 +55,26 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
+            return BadRequest();
+        }
+    }
+
+    /// <summary>
+    /// Update a Room
+    /// </summary>
+    /// <param name="roomId"></param>
+    /// <returns></returns>
+    [HttpPut("{roomId}")]
+    public async Task<ActionResult<bool>> UpdateRoom(long roomId, [FromQuery] RoomDTO updatedRoom)
+    {
+        try
+        {
+            return Ok(await _roomService.UpdateRoom(updatedRoom));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -74,8 +93,7 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
+            return BadRequest();
         }
     }
-
 }

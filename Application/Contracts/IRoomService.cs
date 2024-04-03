@@ -4,7 +4,8 @@ namespace Application.Contracts;
 
 public interface IRoomService
 {
-    IEnumerable<RoomDTO> GetFilteredRooms(DateOnly? from, DateOnly? until, long? hotelId, bool? isAvailable);
+    Task<IEnumerable<RoomDTO>> GetFilteredRooms(FiltersDTO filters);
     Task<bool> CreateRoom(RoomDTO newRoom, long hotelId);
+    Task<bool> UpdateRoom(RoomDTO updatedRoom);
     Task<bool> DeleteRoom(long roomId);
 }

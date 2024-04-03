@@ -35,7 +35,7 @@ public class BookingsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
-            return BadRequest(ex);
+            return BadRequest();
         }
     }
 
@@ -50,8 +50,7 @@ public class BookingsController : ControllerBase
     {
         try
         {
-            var result = await _bookingService.BookRoom(roomId, booking);
-            return Ok(result);
+            return Ok(await _bookingService.BookRoom(roomId, booking));
         }
         catch (Exception ex)
         {

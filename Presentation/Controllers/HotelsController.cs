@@ -35,7 +35,48 @@ public class HotelsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
+        }
+    }
+
+    /// <summary>
+    /// Gets hotel by id
+    /// </summary>
+    /// <param name="hotelId"></param>
+    /// <returns></returns>
+    [HttpGet("{hotelId}")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotelsAsync(long hotelId)
+    {
+        try
+        {
+            return Ok(await _hotelsService.GetById(hotelId));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest();
+        }
+    }
+
+    /// <summary>
+    /// Creates a new hotel
+    /// </summary>
+    /// <param name="hotelInfo"></param>
+    /// <returns></returns>
+    [HttpPost()]
+    [Authorize]
+    public async Task<ActionResult<bool>> CreateHotel([FromBody] HotelDTO hotelInfo)
+    {
+        try
+        {
+            return Ok(await _hotelsService.Create(hotelInfo));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 

@@ -26,7 +26,15 @@ public class HotelService : IHotelService
 
     public async Task<HotelDTO> GetById(long hotelId)
     {
-        var hotel = await _hotelsRepo.GetByID(hotelId);
+        var hotel = await _hotelsRepo.GetByID(hotelId)
+            ?? throw new ApplicationException("No hotel found");
+
         return HotelDTO.MapFromDomainEntity(hotel);
+    }
+
+    public async Task<bool> Create(HotelDTO newHotelInfo)
+    {
+        await _hotelsRepo.Add(newHotelInfo.MapToDomainEntity());
+        return await _hotelsRepo.SaveChanges();
     }
 }
