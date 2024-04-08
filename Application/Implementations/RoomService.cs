@@ -41,13 +41,15 @@ public class RoomService : IRoomService
     //public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(DateOnly? from, DateOnly? until, long? hotelId, bool? isAvailable)
     public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(FiltersDTO filters)
     {
-        return await _roomsRepo.Query
+        var rooms = await _roomsRepo.Query
             .Include(x => x.Bookings)
             .Where(x => filters.HotelId == null || x.HotelId == filters.HotelId)
+            .ToListAsync();
+
+        return rooms
             .Where(x => (filters.IsAvailable == null || filters.From == null || filters.Until == null)
                 || x.IsAvailableBetweenDates((DateOnly)filters.From, (DateOnly)filters.Until) == filters.IsAvailable)
-            .Select(x => RoomDTO.MapFromDomainEntity(x))
-            .ToListAsync();
+            .Select(x => RoomDTO.MapFromDomainEntity(x));
     }
 
     public async Task<bool> UpdateRoom(RoomDTO updatedRoom)

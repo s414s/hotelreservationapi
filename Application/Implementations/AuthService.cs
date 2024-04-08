@@ -59,7 +59,6 @@ public class AuthService : IAuthService
         var user = await _usersRepo.GetByCredentials(loginInfo.Username, loginInfo.Password)
             ?? throw new ApplicationException("username or password are not correct");
 
-        //return GenerateJWT(user.Id, user.Role);
         return GenerateJWT(user.Id, user.Role);
 
     }
