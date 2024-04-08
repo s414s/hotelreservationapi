@@ -3,6 +3,7 @@ using Application.DTOs;
 using Domain.Contracts;
 using Domain.Entities;
 using Domain.Enum;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,19 +20,38 @@ public class AuthService : IAuthService
     private readonly string _jwtKey;
     private readonly string _jwtIssuer;
     private readonly string _jwtAudience;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthService(IUsersRepository usersRepo, IConfiguration config)
+    public AuthService(IUsersRepository usersRepo, IConfiguration config, IHttpContextAccessor httpCA)
     {
         _usersRepo = usersRepo;
+        _httpContextAccessor = httpCA;
         _jwtKey = config["JWT:Key"] ?? throw new ArgumentNullException("missing jwt key");
         _jwtIssuer = config["JWT:Issuer"] ?? throw new ArgumentNullException("missing jwt issuer");
         _jwtAudience = config["JWT:Audience"] ?? throw new ArgumentNullException("missing jwt audience");
     }
 
-    public Task<UserDTO> GetActiveUser()
+    public async Task<UserDTO> GetActiveUser()
     {
-        // TODO - leer info del JWT
-        throw new NotImplementedException();
+        var user = _httpContextAccessor.HttpContext?.User;
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var claimsIdentity = user.Identity as ClaimsIdentity;
+            var userId = claimsIdentity?.FindFirst("id")?.Value
+                ?? throw new ApplicationException("user not found");
+
+            var role = claimsIdentity?.FindFirst("userrole")?.Value
+                ?? throw new ApplicationException("no role found");
+
+            var userEntity = await _usersRepo.GetByID(long.Parse(userId))
+                ?? throw new ApplicationException("user not found");
+
+            return UserDTO.MapFromDomainEntity(userEntity);
+        }
+        else
+        {
+            throw new ApplicationException("you are not authenticated");
+        }
     }
 
     public async Task<string> Login(LoginDTO loginInfo)
@@ -40,7 +60,7 @@ public class AuthService : IAuthService
             ?? throw new ApplicationException("username or password are not correct");
 
         //return GenerateJWT(user.Id, user.Role);
-        return GenerateJWTTokens(user.Id, user.Role);
+        return GenerateJWT(user.Id, user.Role);
 
     }
 
@@ -57,41 +77,8 @@ public class AuthService : IAuthService
         await _usersRepo.SaveChanges();
     }
 
-    private string GenerateJWT(long userId, Roles role)
-    {
-        // Define security key and token parameters
-        // OJO que en el otro lo hace distinto
-        var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_jwtKey));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        // TODO - private claims
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()), // user id
-            new Claim(JwtRegisteredClaimNames.Iss, _jwtIssuer), // issuer
-            new Claim(JwtRegisteredClaimNames.Aud, _jwtAudience), // audience
-            new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()), // issued at time
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // jwt id
-            new Claim("role", role.ToString()),
-        };
-
-        // Create token
-        var token = new JwtSecurityToken(
-            issuer: _jwtIssuer,
-            audience: _jwtAudience,
-            claims: claims,
-            expires: DateTime.Now.AddHours(1), // Token expiration time
-            signingCredentials: credentials
-        );
-
-        var payload = token.Payload;
-
-        // Serialize token to string
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
     // https://codepedia.info/aspnet-core-jwt-refresh-token-authentication
-    public string GenerateJWTTokens(long userId, Roles role)
+    public string GenerateJWT(long userId, Roles role)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenKey = Encoding.UTF8.GetBytes(_jwtKey);
@@ -102,7 +89,7 @@ public class AuthService : IAuthService
             Subject = new ClaimsIdentity(new Claim[]
                 {
                     new("id", userId.ToString()),
-                    new("role", role.ToString())
+                    new("userrole", role.ToString())
                 }),
             Expires = DateTime.Now.AddMinutes(5),
             SigningCredentials = new SigningCredentials(
@@ -113,8 +100,8 @@ public class AuthService : IAuthService
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         // ===============
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var securityKey = new SymmetricSecurityKey(tokenKey);
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
         // TODO - private claims
         var claims = new[]
@@ -134,11 +121,13 @@ public class AuthService : IAuthService
             expires: DateTime.Now.AddHours(1), // Token expiration time
             signingCredentials: credentials);
 
-        var payloaddd = testOfJWT.Payload;
-        var tokenazo = tokenHandler.WriteToken(testOfJWT);
-
+        // TODO delete this
+        //var payloaddd = testOfJWT.Payload;
+        //var tokenazo = tokenHandler.WriteToken(testOfJWT);
         // ===============
+
         return tokenHandler.WriteToken(token);
+        //return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
 }

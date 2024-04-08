@@ -79,5 +79,4 @@ public class HotelsController : ControllerBase
             return BadRequest();
         }
     }
-
 }

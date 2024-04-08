@@ -27,13 +27,13 @@ public class AuthController : ControllerBase
     /// Gets active user info
     /// </summary>
     /// <returns></returns>
-    [AllowAnonymous]
+    [Authorize]
     [HttpGet("me")]
-    public ActionResult<UserDTO> GetActiveUser()
+    public async Task<ActionResult<UserDTO>> GetActiveUserAsync()
     {
         try
         {
-            return Ok(_authService.GetActiveUser());
+            return Ok(await _authService.GetActiveUser());
         }
         catch (Exception ex)
         {
