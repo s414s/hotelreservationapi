@@ -25,13 +25,32 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     //[Authorize(Roles = "User")]
-    [Authorize]
+    //[Authorize]
     [HttpGet()]
     public ActionResult<IEnumerable<HotelDTO>> GetHotels([FromQuery] Cities? city)
     {
         try
         {
             return Ok(_hotelsService.GetFilteredHotels(city));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest();
+        }
+    }
+
+    /// <summary>
+    /// Gets hotel rooms
+    /// </summary>
+    /// <param name="hotelId"></param>
+    /// <returns></returns>
+    [HttpGet("{hotelId}/Rooms")]
+    public async Task<ActionResult<HotelDTO>> GetHotelWithRooms(long hotelId)
+    {
+        try
+        {
+            return Ok(await _hotelsService.GetById(hotelId));
         }
         catch (Exception ex)
         {

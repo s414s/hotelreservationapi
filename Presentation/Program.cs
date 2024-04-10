@@ -18,15 +18,19 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("allOrigins", policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin();
+        policyBuilder.AllowAnyHeader();
+        policyBuilder.AllowAnyMethod();
+    });
+});
+
 // Add authentication and authorization
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
-
 builder.Services
-    //.AddAuthentication(options =>
-    //{
-    //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    //})
     .AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
@@ -141,7 +145,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors();
+app.UseCors("allOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,7 +1,9 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Middlewares;
 
 namespace Presentation.Controllers;
 
@@ -28,6 +30,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [Authorize]
+    [AuthorizationFilter(Roles.Admin)]
     [HttpGet("me")]
     public async Task<ActionResult<UserDTO>> GetActiveUserAsync()
     {

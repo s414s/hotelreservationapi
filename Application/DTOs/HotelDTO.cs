@@ -18,6 +18,7 @@ public class HotelDTO
         {
             Id = hotel.Id,
             Name = hotel.Name,
+            Address = hotel.Address,
             City = hotel.City,
             NumberOfRooms = hotel.Rooms.Count(),
             Rooms = hotel.Rooms.Select(r => RoomDTO.MapFromDomainEntity(r)),
