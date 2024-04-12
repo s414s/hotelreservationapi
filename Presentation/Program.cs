@@ -14,9 +14,9 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
 
-// config info
-// https://medium.com/@saisiva249/how-to-configure-postgres-database-for-a-net-a2ee38f29372
+Console.WriteLine("Building the app");
 
+// config info https://medium.com/@saisiva249/how-to-configure-postgres-database-for-a-net-a2ee38f29372
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -38,23 +38,14 @@ builder.Services
         // TODO READ https://matteosonoio.it/aspnet-core-authentication-schemes/
         // TOOD READ https://learn.microsoft.com/es-es/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-8.0&tabs=windows
 
-        options.RequireHttpsMetadata = false; // make it true for poduction
-
-        // ====================================
-        // creo que esta config es para crear el token?
-
         // IDENTITY PROVIDER
-        // The authentication server address
-        //options.Authority = "https://login.microsoftonline.com/136544d9-xxxx-xxxxxxxx-10accb370679/v2.0";
+        options.RequireHttpsMetadata = false; // make it true for poduction
         options.Authority = builder.Configuration["JWT:Issuer"];
-
         options.ClaimsIssuer = builder.Configuration["JWT:Issuer"];
 
         // The target application for which the JWT is emitted
-        //options.Audience = "257b6c36-xxxx-xxxx-xxxx6f2cd81cec43";
         options.Audience = builder.Configuration["JWT:Audience"];
 
-        // ====================================
         var Key = Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]!);
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
@@ -87,7 +78,6 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(c =>
     {
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -102,7 +92,10 @@ builder.Services.AddSwaggerGen(c =>
         c.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             {
-                new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                },
                 new string[] {}
             }
         });
@@ -145,7 +138,6 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
     var dbContext = serviceScope.ServiceProvider.GetService<DatabaseContext>();
     dbContext.Database.Migrate();
 }
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
