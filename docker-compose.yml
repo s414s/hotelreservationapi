@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  presentation:
+    image: ${DOCKER_REGISTRY-}presentation
+    build:
+      context: .
+      dockerfile: Presentation/Dockerfile
+    ports:
+      - "5000:5093"
+
+  hotels.database:
+    image: postgres:15
+    container_name: hotels.database
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=2209
+      - POSTGRES_DB=hotels
+    volumes:
+      - ./.containers/hotels-db:/var/lib/postgresql/data
+    ports:
+      - 2000:5432
