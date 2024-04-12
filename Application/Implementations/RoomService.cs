@@ -2,6 +2,7 @@
 using Application.DTOs;
 using Domain.Contracts;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementations;
 
@@ -22,6 +23,7 @@ public class RoomService : IRoomService
             ?? throw new ApplicationException("the hotel does not exist");
 
         var room = newRoom.MapToDomainEntity();
+        room.HotelId = hotel.Id;
 
         await _roomsRepo.Add(room);
         return await _roomsRepo.SaveChanges();
@@ -36,12 +38,28 @@ public class RoomService : IRoomService
         return await _roomsRepo.SaveChanges();
     }
 
-    public IEnumerable<RoomDTO> GetFilteredRooms(DateOnly from, DateOnly until, long? hotelId, bool? isAvailable)
+    //public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(DateOnly? from, DateOnly? until, long? hotelId, bool? isAvailable)
+    public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(FiltersDTO filters)
     {
-        return _roomsRepo.Query
-            .Where(x => hotelId == null || x.Id == hotelId)
-            .Where(x => isAvailable == null || x.IsAvailableBetweenDates(from, until) == isAvailable)
-            .Select(x => RoomDTO.MapFromDomainEntity(x))
-            ;
+        var rooms = await _roomsRepo.Query
+            .Include(x => x.Bookings)
+            .Where(x => filters.HotelId == null || x.HotelId == filters.HotelId)
+            .ToListAsync();
+
+        return rooms
+            .Where(x => (filters.IsAvailable == null || filters.From == null || filters.Until == null)
+                || x.IsAvailableBetweenDates((DateOnly)filters.From, (DateOnly)filters.Until) == filters.IsAvailable)
+            .Select(x => RoomDTO.MapFromDomainEntity(x));
+    }
+
+    public async Task<bool> UpdateRoom(RoomDTO updatedRoom)
+    {
+        var room = await _roomsRepo.GetByID(updatedRoom.Id)
+            ?? throw new ApplicationException("the room does not exist");
+
+        room.Storey = updatedRoom.Storey;
+        room.Type = updatedRoom.Type;
+
+        return await _roomsRepo.Update(room);
     }
 }

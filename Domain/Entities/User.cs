@@ -5,16 +5,16 @@ namespace Domain.Entities;
 
 public class User : Entity
 {
-    public required string Name { get; set; }
-    public required string Surname { get; set; }
-    public string Password { get; set; } = string.Empty;
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    public string Password { get; set; }
     public Roles Role { get; set; }
 
     public User() { }
     public User(string name, string surname, string password, Roles role = Roles.User)
     {
-        Name = name;
-        Surname = surname;
+        Name = name.ToLower();
+        Surname = surname.ToLower();
         Password = password;
         Role = role;
     }

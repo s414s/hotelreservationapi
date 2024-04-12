@@ -1,6 +1,9 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Domain.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Middlewares;
 
 namespace Presentation.Controllers;
 
@@ -9,11 +12,16 @@ namespace Presentation.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(
+        IAuthService authService,
+        IHttpContextAccessor httpContextAccessor,
+        ILogger<AuthController> logger)
     {
         _authService = authService;
+        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
     }
 
@@ -21,16 +29,19 @@ public class AuthController : ControllerBase
     /// Gets active user info
     /// </summary>
     /// <returns></returns>
+    [Authorize]
+    [AuthorizationFilter(Roles.Admin)]
     [HttpGet("me")]
-    public ActionResult<UserDTO> GetActiveUser()
+    public async Task<ActionResult<UserDTO>> GetActiveUserAsync()
     {
         try
         {
-            return Ok(_authService.GetActiveUser());
+            return Ok(await _authService.GetActiveUser());
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -40,16 +51,19 @@ public class AuthController : ControllerBase
     /// <param name="loginInfo"></param>
     /// <returns></returns>
     [HttpPost("login")]
-    public ActionResult<bool> Login([FromBody] LoginDTO loginInfo)
+    public async Task<ActionResult<object>> LoginAsync([FromBody] LoginDTO loginInfo)
     {
         try
         {
-            _authService.Login(loginInfo);
-            return Ok(true);
+            var jwtToken = await _authService.Login(loginInfo);
+            _httpContextAccessor.HttpContext.Response.Headers.Add("Authorization", $"bearer {jwtToken}");
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", jwtToken, new CookieOptions { HttpOnly = true });
+            return Ok(new { token = jwtToken });
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -57,17 +71,19 @@ public class AuthController : ControllerBase
     /// Logout
     /// </summary>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpGet("logout")]
-    public ActionResult<bool> Logout()
+    public async Task<IActionResult> LogoutAsync()
     {
         try
         {
-            _authService.Logout();
-            return Ok(true);
+            await _authService.Logout();
+            return Ok();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -86,7 +102,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 

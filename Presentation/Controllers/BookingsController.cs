@@ -1,6 +1,5 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
-using Application.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -26,41 +25,46 @@ public class BookingsController : ControllerBase
     /// <param name="end"></param>
     /// <returns></returns>
     [HttpGet()]
-    public async Task<ActionResult<BookingDTO>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateOnly start, DateOnly end)
+    public async Task<ActionResult<BookingDTO>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateTime? start, DateTime? end, string? guestDNI)
     {
         try
         {
-            return Ok(await _bookingService.GetFilteredBookings(start, end, hotelId, clientId));
+            var filters = new FiltersDTO
+            {
+                HotelId = hotelId,
+                ClientId = clientId,
+                From = start is DateTime from ? DateOnly.FromDateTime(from) : null,
+                Until = end is DateTime until ? DateOnly.FromDateTime(until) : null,
+                GuestDNI = guestDNI
+            };
+
+            return Ok(await _bookingService.GetFilteredBookings(filters));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
-            return BadRequest(ex);
+            return BadRequest();
         }
-    }
-
-    /// <summary>
-    /// Gets an specific booking
-    /// </summary>
-    /// <param name="bookingId"></param>
-    /// <returns></returns>
-    [HttpGet("{bookingId}")]
-    public ActionResult<BookingDTO> GetBookingById(long bookingId)
-    {
-        return new BookingDTO();
     }
 
     /// <summary>
     /// Places a booking
     /// </summary>
-    /// <param name="from"></param>
-    /// <param name="until"></param>
-    /// <param name="guestIds"></param>
+    /// <param name="roomId"></param>
+    /// <param name="booking"></param>
     /// <returns></returns>
     [HttpPost("{roomId}")]
-    public ActionResult<BookingDTO> CreateBooking(DateOnly from, DateOnly until, IEnumerable<long> guestIds)
+    public async Task<ActionResult<bool>> CreateBooking(long roomId, [FromBody] BookingDTO booking)
     {
-        return new BookingDTO();
+        try
+        {
+            return Ok(await _bookingService.BookRoom(roomId, booking));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest(false);
+        }
     }
 
     /// <summary>
@@ -69,8 +73,16 @@ public class BookingsController : ControllerBase
     /// <param name="bookingId"></param>
     /// <returns></returns>
     [HttpDelete("{bookingId}")]
-    public ActionResult<bool> DeleteBooking(long bookingId)
+    public async Task<ActionResult<bool>> DeleteBooking(long bookingId)
     {
-        return true;
+        try
+        {
+            return Ok(await _bookingService.DeleteBooking(bookingId));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return BadRequest(false);
+        }
     }
 }

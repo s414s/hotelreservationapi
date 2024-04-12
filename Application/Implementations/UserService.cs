@@ -1,15 +1,14 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
 using Domain.Contracts;
-using Domain.Entities;
 
 namespace Application.Implementations;
 
 public class UserService : IUserService
 {
-    private readonly IRepository<User> _usersRepo;
+    private readonly IUsersRepository _usersRepo;
 
-    public UserService(IRepository<User> userRepo)
+    public UserService(IUsersRepository userRepo)
     {
         _usersRepo = userRepo;
     }

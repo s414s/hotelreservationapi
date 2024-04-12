@@ -8,6 +8,7 @@ public class Booking : Entity
     public DateOnly End { get; set; }
 
     // Navigation properties
+    public long RoomId { get; set; }
     public virtual Room? Room { get; set; }
     public ICollection<Guest>? Guests { get; set; }
 

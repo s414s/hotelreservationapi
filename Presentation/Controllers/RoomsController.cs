@@ -26,16 +26,24 @@ public class RoomsController : ControllerBase
     /// <param name="isAvailable">Is Available</param>
     /// <returns></returns>
     [HttpGet("Available")]
-    public ActionResult<bool> GetFilteredRooms([FromQuery] DateOnly startDate, DateOnly endDate, long? hotelId, bool? isAvailable)
+    public async Task<ActionResult<List<RoomDTO>>> GetFilteredRoomsAsync([FromQuery] DateTime startDate, DateTime endDate, long? hotelId, bool? isAvailable)
     {
         try
         {
-            return Ok(_roomService.GetFilteredRooms(startDate, endDate, hotelId, isAvailable));
+            var filters = new FiltersDTO
+            {
+                HotelId = hotelId,
+                IsAvailable = isAvailable,
+                From = startDate is DateTime from ? DateOnly.FromDateTime(from) : null,
+                Until = endDate is DateTime until ? DateOnly.FromDateTime(until) : null,
+            };
+
+            return Ok(await _roomService.GetFilteredRooms(filters));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -54,8 +62,28 @@ public class RoomsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
+            Console.WriteLine(ex.Message);
+            return BadRequest();
+        }
+    }
+
+    /// <summary>
+    /// Update a Room
+    /// </summary>
+    /// <param name="roomId"></param>
+    /// <returns></returns>
+    [HttpPut("{roomId}")]
+    public async Task<ActionResult<bool>> UpdateRoom(long roomId, [FromQuery] RoomDTO updatedRoom)
+    {
+        try
+        {
+            updatedRoom.Id = roomId;
+            return Ok(await _roomService.UpdateRoom(updatedRoom));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return BadRequest();
         }
     }
 
@@ -73,9 +101,9 @@ public class RoomsController : ControllerBase
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
             _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
+            return BadRequest();
         }
     }
-
 }
