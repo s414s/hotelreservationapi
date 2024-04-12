@@ -2,7 +2,7 @@
 
 ## migrations
 
-### Nugger package manager console (selecting infrastructure project)
+### Nugget package manager console (selecting infrastructure project)
 
 Add-Migration <NameOfMigration> -Context DatabaseContext -OutputDir Persistence/Migrations
 
@@ -21,3 +21,9 @@ dotnet-ef migrations remove -c DatabaseContext --project Infrastructure --startu
 dotnet-ef database update -c DatabaseContext --project Infrastructure --startup-project WebApi/
 
 dotnet ef migrations script -c DatabaseContext
+
+### Docker
+Database image
+```
+docker run --name databasev1 -p 2000:5432 -e POSTGRES_PASSWORD=2209 -d postgres:15
+```
