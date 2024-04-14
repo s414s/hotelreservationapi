@@ -125,9 +125,6 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddDbContext<DatabaseContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 
-// Or if you have a common repository implementation, you can register it as a generic service
-//builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
@@ -140,11 +137,15 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("allOrigins");
 
