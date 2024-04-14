@@ -141,7 +141,8 @@ else
 }
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
+        options.UseNpgsql(connectionString));
+        //options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 
 builder.Services.AddHttpContextAccessor();
 
