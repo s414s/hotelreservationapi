@@ -133,7 +133,8 @@ var app = builder.Build();
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var dbContext = serviceScope.ServiceProvider.GetService<DatabaseContext>();
-    dbContext.Database.Migrate();
+    if (dbContext == null) Console.WriteLine("Unable to establish connection to db");
+    dbContext?.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
@@ -148,7 +149,6 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("allOrigins");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
