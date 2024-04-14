@@ -126,23 +126,13 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 var isDockerString = Environment.GetEnvironmentVariable("IS_DOCKER");
 var isDocker = false;
 bool.TryParse(isDockerString, out isDocker);
-
-Console.WriteLine("ENV_ISDOCKER");
+Console.WriteLine("ENV IS_DOCKER");
 Console.WriteLine(isDocker);
 
-var connectionString = string.Empty;
-if (isDocker)
-{
-    connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
-}
-else
-{
-    connectionString = builder.Configuration.GetConnectionString("LocalWebApiDatabase");
-}
+var connectionString = builder.Configuration.GetConnectionString(isDocker ? "WebApiDatabase" : "LocalWebApiDatabase");
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
         options.UseNpgsql(connectionString));
-        //options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 
 builder.Services.AddHttpContextAccessor();
 
