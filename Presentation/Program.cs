@@ -122,6 +122,24 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 //    .AddDbContext<DatabaseContext>(options =>
 //        options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 
+
+var isDockerString = Environment.GetEnvironmentVariable("IS_DOCKER");
+var isDocker = false;
+bool.TryParse(isDockerString, out isDocker);
+
+Console.WriteLine("ENV_ISDOCKER");
+Console.WriteLine(isDocker);
+
+var connectionString = string.Empty;
+if (isDocker)
+{
+    connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
+}
+else
+{
+    connectionString = builder.Configuration.GetConnectionString("LocalWebApiDatabase");
+}
+
 builder.Services.AddDbContext<DatabaseContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 
