@@ -24,8 +24,8 @@ public class BookingsController : ControllerBase
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    [HttpGet()]
-    public async Task<ActionResult<BookingDTO>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateTime? start, DateTime? end, string? guestDNI)
+    [HttpGet("")]
+    public async Task<ActionResult<List<BookingDTO>>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateTime? start, DateTime? end, string? guestDNI)
     {
         try
         {

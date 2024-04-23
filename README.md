@@ -27,3 +27,13 @@ Database image
 ```
 docker run --name databasev1 -p 2000:5432 -e POSTGRES_PASSWORD=2209 -d postgres:15
 ```
+
+
+```
+docker build . -t demo
+docker run -p 6969:5093 -e ASPNETCORE_URLS=http://+80 demo:v1
+```
+
+```
+docker-compose down --rmi all
+```

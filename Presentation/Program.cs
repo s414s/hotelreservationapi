@@ -5,13 +5,9 @@ using Domain.Contracts;
 using Domain.Entities;
 using Infrastructure.Persistence.Context;
 using Infrastructure.Persistence.Implementations;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System;
 using System.Text;
 
 Console.WriteLine("Building the app");
@@ -118,15 +114,11 @@ builder.Services.AddScoped<IRepository<Hotel>, HotelsRepository>();
 builder.Services.AddScoped<IRepository<Room>, RoomsRepository>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
-//builder.Services.AddEntityFrameworkNpgsql()
-//    .AddDbContext<DatabaseContext>(options =>
-//        options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
+var isDocker = false;
+bool.TryParse(Environment.GetEnvironmentVariable("IS_DOCKER"), out isDocker);
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
-
-// Or if you have a common repository implementation, you can register it as a generic service
-//builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+        options.UseNpgsql(builder.Configuration.GetConnectionString(isDocker ? "WebApiDatabase" : "LocalWebApiDatabase")));
 
 builder.Services.AddHttpContextAccessor();
 
@@ -136,18 +128,22 @@ var app = builder.Build();
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var dbContext = serviceScope.ServiceProvider.GetService<DatabaseContext>();
-    dbContext.Database.Migrate();
+    if (dbContext == null) Console.WriteLine("Unable to establish connection to db");
+    dbContext?.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("allOrigins");
-
 app.UseAuthentication();
 app.UseAuthorization();
 

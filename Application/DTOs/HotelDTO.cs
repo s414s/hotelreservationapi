@@ -10,7 +10,7 @@ public class HotelDTO
     public string Address { get; set; } = string.Empty;
     public Cities City { get; set; }
     public int NumberOfRooms { get; set; }
-    public IEnumerable<RoomDTO> Rooms { get; set; } = Enumerable.Empty<RoomDTO>();
+    public List<RoomDTO> Rooms { get; set; } = [];
 
     public static HotelDTO MapFromDomainEntity(Hotel hotel)
     {
@@ -20,10 +20,10 @@ public class HotelDTO
             Name = hotel.Name,
             Address = hotel.Address,
             City = hotel.City,
-            NumberOfRooms = hotel.Rooms.Count(),
-            Rooms = hotel.Rooms.Select(r => RoomDTO.MapFromDomainEntity(r)),
+            NumberOfRooms = hotel.Rooms?.Count ?? 0,
+            Rooms = hotel.Rooms?.Select(r => RoomDTO.MapFromDomainEntity(r)).ToList() ?? [],
         };
     }
 
-    public Hotel MapToDomainEntity() => new Hotel(Name, Address, City);
+    public Hotel MapToDomainEntity() => new(Name, Address, City);
 }
