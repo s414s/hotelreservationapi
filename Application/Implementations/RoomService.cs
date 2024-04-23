@@ -38,6 +38,14 @@ public class RoomService : IRoomService
         return await _roomsRepo.SaveChanges();
     }
 
+    public async Task<RoomDTO> GetById(long roomId)
+    {
+        var room = await _roomsRepo.GetByID(roomId)
+            ?? throw new ApplicationException("the room does not exist");
+
+        return RoomDTO.MapFromDomainEntity(room);
+    }
+
     //public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(DateOnly? from, DateOnly? until, long? hotelId, bool? isAvailable)
     public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(FiltersDTO filters)
     {

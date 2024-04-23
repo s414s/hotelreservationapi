@@ -48,6 +48,26 @@ public class RoomsController : ControllerBase
     }
 
     /// <summary>
+    /// Get room by id
+    /// </summary>
+    /// <param name="roomId"></param>
+    /// <returns></returns>
+    [HttpGet("{roomId}")]
+    public async Task<ActionResult<bool>> GetRoomById(long roomId)
+    {
+        try
+        {
+            return Ok(await _roomService.GetById(roomId));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            _logger.LogError(ex.Message);
+            return BadRequest();
+        }
+    }
+
+    /// <summary>
     /// Creates a new room
     /// </summary>
     /// <param name="hotelId">Hotel id</param>

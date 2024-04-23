@@ -24,7 +24,7 @@ public class BookingService : IBookingService
         var room = await _roomsRepo.GetByID(roomId)
             ?? throw new ApplicationException("the room does not exist");
 
-        if (!room.IsAvailableBetweenDates(booking.From, booking.Until))
+        if (!room.IsAvailableBetweenDates(DateOnly.FromDateTime(booking.From), DateOnly.FromDateTime(booking.Until)))
             throw new ApplicationException("the room is not available on those dates");
 
         if (room.GetCapacity() < booking.Guests.Count())
@@ -46,12 +46,12 @@ public class BookingService : IBookingService
         return await _bookingsRepo.SaveChanges();
     }
 
-    //public async Task<IEnumerable<BookingDTO>> GetFilteredBookings(DateOnly? from, DateOnly? until, long? hotelId, long? roomId, string? guestDNI)
     public async Task<IEnumerable<BookingDTO>> GetFilteredBookings(FiltersDTO filters)
     {
         return await _bookingsRepo.Query
             .Include(b => b.Guests)
             .Include(b => b.Room)
+                .ThenInclude(r => r.Hotel)
             .Where(b => filters.GuestDNI == null || b.Guests.Any(x => x.DNI == filters.GuestDNI))
             .Where(b => filters.HotelId == null || b.Room.HotelId == filters.HotelId)
             .Where(b => filters.RoomId == null || b.RoomId == filters.RoomId)

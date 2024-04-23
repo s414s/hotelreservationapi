@@ -5,13 +5,9 @@ using Domain.Contracts;
 using Domain.Entities;
 using Infrastructure.Persistence.Context;
 using Infrastructure.Persistence.Implementations;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System;
 using System.Text;
 
 Console.WriteLine("Building the app");
@@ -118,21 +114,11 @@ builder.Services.AddScoped<IRepository<Hotel>, HotelsRepository>();
 builder.Services.AddScoped<IRepository<Room>, RoomsRepository>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
-//builder.Services.AddEntityFrameworkNpgsql()
-//    .AddDbContext<DatabaseContext>(options =>
-//        options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
-
-
-var isDockerString = Environment.GetEnvironmentVariable("IS_DOCKER");
 var isDocker = false;
-bool.TryParse(isDockerString, out isDocker);
-Console.WriteLine("ENV IS_DOCKER");
-Console.WriteLine(isDocker);
-
-var connectionString = builder.Configuration.GetConnectionString(isDocker ? "WebApiDatabase" : "LocalWebApiDatabase");
+bool.TryParse(Environment.GetEnvironmentVariable("IS_DOCKER"), out isDocker);
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
-        options.UseNpgsql(connectionString));
+        options.UseNpgsql(builder.Configuration.GetConnectionString(isDocker ? "WebApiDatabase" : "LocalWebApiDatabase")));
 
 builder.Services.AddHttpContextAccessor();
 
