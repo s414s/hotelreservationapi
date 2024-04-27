@@ -46,18 +46,19 @@ public class RoomService : IRoomService
         return RoomDTO.MapFromDomainEntity(room);
     }
 
-    //public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(DateOnly? from, DateOnly? until, long? hotelId, bool? isAvailable)
     public async Task<IEnumerable<RoomDTO>> GetFilteredRooms(FiltersDTO filters)
     {
         var rooms = await _roomsRepo.Query
-            .Include(x => x.Bookings)
-            .Where(x => filters.HotelId == null || x.HotelId == filters.HotelId)
+            .Include(r => r.Bookings)
+            .Where(r => filters.HotelId == null || r.HotelId == filters.HotelId)
             .ToListAsync();
 
-        return rooms
-            .Where(x => (filters.IsAvailable == null || filters.From == null || filters.Until == null)
-                || x.IsAvailableBetweenDates((DateOnly)filters.From, (DateOnly)filters.Until) == filters.IsAvailable)
-            .Select(x => RoomDTO.MapFromDomainEntity(x));
+        if (filters.From is DateOnly from && filters.Until is DateOnly until)
+        {
+            rooms = rooms.Where(x => x.IsAvailableBetweenDates(from, until)).ToList();
+        }
+
+        return rooms.Select(x => RoomDTO.MapFromDomainEntity(x));
     }
 
     public async Task<bool> UpdateRoom(RoomDTO updatedRoom)

@@ -1,9 +1,13 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Domain.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Middlewares;
 
 namespace Presentation.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class RoomsController : ControllerBase
@@ -26,17 +30,21 @@ public class RoomsController : ControllerBase
     /// <param name="isAvailable">Is Available</param>
     /// <returns></returns>
     [HttpGet("Available")]
-    public async Task<ActionResult<List<RoomDTO>>> GetFilteredRoomsAsync([FromQuery] DateTime startDate, DateTime endDate, long? hotelId, bool? isAvailable)
+    public async Task<ActionResult<List<RoomDTO>>> GetFilteredRoomsAsync([FromQuery] DateTime startDate, DateTime endDate, long? hotelId)
     {
         try
         {
             var filters = new FiltersDTO
             {
                 HotelId = hotelId,
-                IsAvailable = isAvailable,
-                From = startDate is DateTime from ? DateOnly.FromDateTime(from) : null,
-                Until = endDate is DateTime until ? DateOnly.FromDateTime(until) : null,
+                IsAvailable = true,
             };
+
+            if (startDate is DateTime from && endDate is DateTime until)
+            {
+                filters.From = DateOnly.FromDateTime(from);
+                filters.Until = DateOnly.FromDateTime(until);
+            }
 
             return Ok(await _roomService.GetFilteredRooms(filters));
         }
@@ -112,6 +120,7 @@ public class RoomsController : ControllerBase
     /// </summary>
     /// <param name="roomId"></param>
     /// <returns></returns>
+    [AuthorizationFilter(Roles.Admin)]
     [HttpDelete("{roomId}")]
     public async Task<ActionResult<bool>> DeleteRoom(long roomId)
     {
