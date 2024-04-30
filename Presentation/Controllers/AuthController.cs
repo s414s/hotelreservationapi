@@ -30,7 +30,6 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [Authorize]
-    [AuthorizationFilter(Roles.Admin)]
     [HttpGet("me")]
     public async Task<ActionResult<UserDTO>> GetActiveUserAsync()
     {
@@ -73,18 +72,9 @@ public class AuthController : ControllerBase
     /// <returns></returns>
     [AllowAnonymous]
     [HttpGet("logout")]
-    public async Task<IActionResult> LogoutAsync()
+    public IActionResult LogoutAsync()
     {
-        try
-        {
-            await _authService.Logout();
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return BadRequest();
-        }
+        return Ok();
     }
 
     /// <summary>
