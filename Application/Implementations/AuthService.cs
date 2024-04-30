@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -15,8 +14,8 @@ namespace Application.Implementations;
 
 public class AuthService : IAuthService
 {
-    private readonly IUsersRepository _usersRepo;
     //private readonly IConfiguration _config;
+    private readonly IUsersRepository _usersRepo;
     private readonly string _jwtKey;
     private readonly string _jwtIssuer;
     private readonly string _jwtAudience;
@@ -63,15 +62,9 @@ public class AuthService : IAuthService
 
     }
 
-    public Task Logout()
-    {
-        // TODO - borrar info del Bearer
-        throw new NotImplementedException();
-    }
-
     public async Task SignUp(SignupDTO signupInfo)
     {
-        var newUser = new User(signupInfo.Name, signupInfo.Surname, signupInfo.Password);
+        var newUser = new User(signupInfo.Name.ToLower(), signupInfo.Surname.ToLower(), signupInfo.Password);
         await _usersRepo.Add(newUser);
         await _usersRepo.SaveChanges();
     }
@@ -98,11 +91,9 @@ public class AuthService : IAuthService
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
-        // ===============
         var securityKey = new SymmetricSecurityKey(tokenKey);
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+        //var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
-        // TODO - private claims
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()), // user id
@@ -113,17 +104,12 @@ public class AuthService : IAuthService
             new Claim("role", role.ToString()),
         };
 
-        var testOfJWT = new JwtSecurityToken(
-            issuer: _jwtIssuer,
-            audience: _jwtAudience,
-            claims: claims,
-            expires: DateTime.Now.AddHours(1), // Token expiration time
-            signingCredentials: credentials);
-
-        // TODO delete this
-        //var payloaddd = testOfJWT.Payload;
-        //var tokenazo = tokenHandler.WriteToken(testOfJWT);
-        // ===============
+        //var testOfJWT = new JwtSecurityToken(
+        //    issuer: _jwtIssuer,
+        //    audience: _jwtAudience,
+        //    claims: claims,
+        //    expires: DateTime.Now.AddHours(1), // Token expiration time
+        //    signingCredentials: credentials);
 
         return tokenHandler.WriteToken(token);
         //return new JwtSecurityTokenHandler().WriteToken(token);

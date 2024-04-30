@@ -21,7 +21,7 @@ public class Room : Entity
     }
 
     public bool IsAvailableBetweenDates(DateOnly start, DateOnly end)
-        => !Bookings.Any(x => x.Start >= start && x.End <= end);
+        => Bookings?.Any(x => x.Start >= start && x.End <= end) == false;
 
     public int GetCapacity() => Type == RoomTypes.Single ? 1 : 2;
 }

@@ -21,7 +21,9 @@ public class BookingService : IBookingService
 
     public async Task<bool> BookRoom(long roomId, BookingDTO booking)
     {
-        var room = await _roomsRepo.GetByID(roomId)
+        var room = await _roomsRepo.Query
+            .Include(x => x.Bookings)
+            .FirstOrDefaultAsync(x => x.Id == roomId)
             ?? throw new ApplicationException("the room does not exist");
 
         if (!room.IsAvailableBetweenDates(DateOnly.FromDateTime(booking.From), DateOnly.FromDateTime(booking.Until)))
@@ -33,8 +35,7 @@ public class BookingService : IBookingService
         var newBooking = booking.MapToDomainEntity();
         newBooking.RoomId = roomId;
 
-        await _bookingsRepo.Add(newBooking);
-        return await _bookingsRepo.SaveChanges();
+        return await _bookingsRepo.Add(newBooking);
     }
 
     public async Task<bool> DeleteBooking(long bookingId)
@@ -42,12 +43,13 @@ public class BookingService : IBookingService
         var booking = await _bookingsRepo.GetByID(bookingId)
             ?? throw new ApplicationException("the booking does not exist");
 
-        await _bookingsRepo.Delete(booking.Id);
-        return await _bookingsRepo.SaveChanges();
+        return await _bookingsRepo.Delete(booking.Id);
     }
 
     public async Task<IEnumerable<BookingDTO>> GetFilteredBookings(FiltersDTO filters)
     {
+        //var startDateTime = filters.From?.Date + TimeOnly.MinValue.ToTimeSpan();
+        //var endDateTime = filters.Until?.Date + TimeOnly.MaxValue.ToTimeSpan();
         return await _bookingsRepo.Query
             .Include(b => b.Guests)
             .Include(b => b.Room)
