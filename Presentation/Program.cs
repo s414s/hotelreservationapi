@@ -117,20 +117,23 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 var isDocker = false;
 bool.TryParse(Environment.GetEnvironmentVariable("IS_DOCKER"), out isDocker);
 
+//builder.Services.AddDbContext<DatabaseContext>(options =>
+//        options.UseNpgsql(builder.Configuration.GetConnectionString(isDocker ? "WebApiDatabase" : "LocalWebApiDatabase")));
+
 builder.Services.AddDbContext<DatabaseContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString(isDocker ? "WebApiDatabase" : "LocalWebApiDatabase")));
+    options.UseInMemoryDatabase(builder.Configuration.GetConnectionString("MyTestDb")));
 
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
 // Apply migrations
-using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-{
-    var dbContext = serviceScope.ServiceProvider.GetService<DatabaseContext>();
-    if (dbContext == null) Console.WriteLine("Unable to establish connection to db");
-    dbContext?.Database.Migrate();
-}
+//using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+//{
+//    var dbContext = serviceScope.ServiceProvider.GetService<DatabaseContext>();
+//    if (dbContext == null) Console.WriteLine("Unable to establish connection to db");
+//    dbContext?.Database.Migrate();
+//}
 
 // Configure the HTTP request pipeline.
 
