@@ -35,5 +35,6 @@ docker run -p 6969:5093 -e ASPNETCORE_URLS=http://+80 demo:v1
 ```
 
 ```
+docker-compose up
 docker-compose down --rmi all
 ```

@@ -1,9 +1,13 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Domain.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Middlewares;
 
 namespace Presentation.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class BookingsController : ControllerBase
@@ -72,6 +76,7 @@ public class BookingsController : ControllerBase
     /// </summary>
     /// <param name="bookingId"></param>
     /// <returns></returns>
+    [AuthorizationFilter(Roles.Admin)]
     [HttpDelete("{bookingId}")]
     public async Task<ActionResult<bool>> DeleteBooking(long bookingId)
     {

@@ -7,6 +7,7 @@ using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class HotelsController : ControllerBase
@@ -64,7 +65,6 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <param name="hotelId"></param>
     /// <returns></returns>
-    [Authorize]
     [HttpGet("{hotelId}")]
     public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotelsAsync(long hotelId)
     {
@@ -84,7 +84,6 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <param name="hotelInfo"></param>
     /// <returns></returns>
-    [Authorize]
     [HttpPost()]
     public async Task<ActionResult<bool>> CreateHotel([FromBody] HotelDTO hotelInfo)
     {
