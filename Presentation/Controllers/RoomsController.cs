@@ -51,7 +51,7 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -71,7 +71,7 @@ public class RoomsController : ControllerBase
         {
             Console.WriteLine(ex.Message);
             _logger.LogError(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -91,7 +91,7 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -111,7 +111,7 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -132,7 +132,7 @@ public class RoomsController : ControllerBase
         {
             Console.WriteLine(ex.Message);
             _logger.LogError(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 }

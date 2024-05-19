@@ -37,7 +37,7 @@ public class HotelsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -56,7 +56,7 @@ public class HotelsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -75,7 +75,7 @@ public class HotelsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -94,7 +94,7 @@ public class HotelsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 }
