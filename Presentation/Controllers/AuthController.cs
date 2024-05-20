@@ -13,7 +13,6 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<AuthController> _logger;
 
     public AuthController(
         IAuthService authService,
@@ -22,7 +21,6 @@ public class AuthController : ControllerBase
     {
         _authService = authService;
         _httpContextAccessor = httpContextAccessor;
-        _logger = logger;
     }
 
     /// <summary>
