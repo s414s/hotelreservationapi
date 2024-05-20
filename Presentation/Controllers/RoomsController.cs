@@ -27,7 +27,6 @@ public class RoomsController : ControllerBase
     /// <param name="startDate">Start date</param>
     /// <param name="endDate">End date</param>
     /// <param name="hotelId">Hotel id</param>
-    /// <param name="isAvailable">Is Available</param>
     /// <returns></returns>
     [HttpGet("Available")]
     public async Task<ActionResult<List<RoomDTO>>> GetFilteredRoomsAsync([FromQuery] DateTime startDate, DateTime endDate, long? hotelId)
@@ -51,7 +50,7 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -91,7 +90,7 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -111,7 +110,7 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -132,7 +131,7 @@ public class RoomsController : ControllerBase
         {
             Console.WriteLine(ex.Message);
             _logger.LogError(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 }
