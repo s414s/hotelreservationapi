@@ -6,7 +6,7 @@ public interface IRoomService
 {
     Task<IEnumerable<RoomDTO>> GetFilteredRooms(FiltersDTO filters);
     Task<RoomDTO> GetById(long roomId);
-    Task<bool> CreateRoom(RoomDTO newRoom, long hotelId);
-    Task<bool> UpdateRoom(RoomDTO updatedRoom);
+    Task<bool> CreateRoom(NewRoomDTO newRoom, long hotelId);
+    Task<bool> UpdateRoom(long roomId, NewRoomDTO updatedRoom);
     Task<bool> DeleteRoom(long roomId);
 }
