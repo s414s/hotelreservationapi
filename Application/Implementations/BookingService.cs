@@ -3,6 +3,8 @@ using Application.DTOs;
 using Domain.Contracts;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace Application.Implementations;
 
@@ -50,7 +52,12 @@ public class BookingService : IBookingService
     {
         //var startDateTime = filters.From?.Date + TimeOnly.MinValue.ToTimeSpan();
         //var endDateTime = filters.Until?.Date + TimeOnly.MaxValue.ToTimeSpan();
-        return await _bookingsRepo.Query
+        var sortProperty = filters.FieldToOrderBy == string.Empty ? "HotelName" : filters.FieldToOrderBy;
+
+        var prop = typeof(BookingDTO).GetProperty(sortProperty)
+            ?? throw new ApplicationException($"field to order by not allowed, it must be one of the following: {String.Join(", ", typeof(BookingDTO).GetProperties().Select(x => x.Name))}");
+
+        var query = await _bookingsRepo.Query
             .Include(b => b.Guests)
             .Include(b => b.Room)
                 .ThenInclude(r => r.Hotel)
@@ -61,5 +68,12 @@ public class BookingService : IBookingService
             .Where(b => filters.Until == null || b.End <= filters.Until)
             .Select(b => BookingDTO.MapFromDomainEntity(b))
             .ToListAsync();
+
+        return filters.Asc
+            ? query.OrderBy(x => prop.GetValue(x, null))
+            : query.OrderByDescending(x => prop.GetValue(x, null));
     }
+
+    public bool IsRoomAvailableBetweenDates(Room room, DateOnly start, DateOnly end)
+        => room.Bookings?.Any(x => x.Start >= start && x.End <= end) == false;
 }
