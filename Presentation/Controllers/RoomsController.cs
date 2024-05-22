@@ -51,7 +51,7 @@ public class RoomsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -71,7 +71,7 @@ public class RoomsController : ControllerBase
         {
             Console.WriteLine(ex.Message);
             _logger.LogError(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -82,16 +82,20 @@ public class RoomsController : ControllerBase
     /// <param name="newRoom">New Room information</param>
     /// <returns></returns>
     [HttpPost()]
-    public async Task<ActionResult<bool>> CreateRoom(long hotelId, [FromBody] RoomDTO newRoom)
+    public async Task<ActionResult<bool>> CreateRoom(long hotelId, [FromBody] NewRoomDTO newRoom)
     {
         try
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             return Ok(await _roomService.CreateRoom(newRoom, hotelId));
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -101,17 +105,20 @@ public class RoomsController : ControllerBase
     /// <param name="roomId"></param>
     /// <returns></returns>
     [HttpPut("{roomId}")]
-    public async Task<ActionResult<bool>> UpdateRoom(long roomId, [FromQuery] RoomDTO updatedRoom)
+    public async Task<ActionResult<bool>> UpdateRoom(long roomId, [FromQuery] NewRoomDTO updatedRoom)
     {
         try
         {
-            updatedRoom.Id = roomId;
-            return Ok(await _roomService.UpdateRoom(updatedRoom));
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok(await _roomService.UpdateRoom(roomId, updatedRoom));
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
@@ -132,7 +139,7 @@ public class RoomsController : ControllerBase
         {
             Console.WriteLine(ex.Message);
             _logger.LogError(ex.Message);
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 }

@@ -17,7 +17,7 @@ public class RoomService : IRoomService
         _roomsRepo = roomsRepo;
     }
 
-    public async Task<bool> CreateRoom(RoomDTO newRoom, long hotelId)
+    public async Task<bool> CreateRoom(NewRoomDTO newRoom, long hotelId)
     {
         var hotel = await _hotelsRepo.GetByID(hotelId)
             ?? throw new ApplicationException("the hotel does not exist");
@@ -61,9 +61,9 @@ public class RoomService : IRoomService
         return rooms.Select(x => RoomDTO.MapFromDomainEntity(x));
     }
 
-    public async Task<bool> UpdateRoom(RoomDTO updatedRoom)
+    public async Task<bool> UpdateRoom(long roomId, NewRoomDTO updatedRoom)
     {
-        var room = await _roomsRepo.GetByID(updatedRoom.Id)
+        var room = await _roomsRepo.GetByID(roomId)
             ?? throw new ApplicationException("the room does not exist");
 
         room.Storey = updatedRoom.Storey;

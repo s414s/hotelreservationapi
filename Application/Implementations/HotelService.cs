@@ -36,7 +36,7 @@ public class HotelService : IHotelService
         return HotelDTO.MapFromDomainEntity(hotel);
     }
 
-    public async Task<bool> Create(HotelDTO newHotelInfo)
+    public async Task<bool> Create(NewHotelDTO newHotelInfo)
     {
         await _hotelsRepo.Add(newHotelInfo.MapToDomainEntity());
         return await _hotelsRepo.SaveChanges();

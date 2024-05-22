@@ -58,7 +58,7 @@ public class BookingService : IBookingService
             .Where(b => filters.HotelId == null || b.Room.HotelId == filters.HotelId)
             .Where(b => filters.RoomId == null || b.RoomId == filters.RoomId)
             .Where(b => filters.From == null || b.Start >= filters.From)
-            .Where(b => filters.Until == null || b.End >= filters.Until)
+            .Where(b => filters.Until == null || b.End <= filters.Until)
             .Select(b => BookingDTO.MapFromDomainEntity(b))
             .ToListAsync();
     }
