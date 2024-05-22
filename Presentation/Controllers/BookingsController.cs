@@ -29,7 +29,7 @@ public class BookingsController : ControllerBase
     /// <param name="end"></param>
     /// <returns></returns>
     [HttpGet("")]
-    public async Task<ActionResult<List<BookingDTO>>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateTime? start, DateTime? end, string? guestDNI)
+    public async Task<ActionResult<List<BookingDTO>>> GetFilteredBookings([FromQuery] long? hotelId, long? clientId, DateTime? start, DateTime? end, string? guestDNI, bool? asc, string? fieldsToOrderBy)
     {
         try
         {
@@ -39,7 +39,9 @@ public class BookingsController : ControllerBase
                 ClientId = clientId,
                 From = start is DateTime from ? DateOnly.FromDateTime(from) : null,
                 Until = end is DateTime until ? DateOnly.FromDateTime(until) : null,
-                GuestDNI = guestDNI
+                GuestDNI = guestDNI,
+                Asc = asc ?? true,
+                FieldToOrderBy = fieldsToOrderBy ?? string.Empty,
             };
 
             return Ok(await _bookingService.GetFilteredBookings(filters));

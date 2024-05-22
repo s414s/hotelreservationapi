@@ -12,4 +12,6 @@ public class FiltersDTO
     public long? ClientId { get; set; }
     public string? GuestDNI { get; set; }
     public bool? IsAvailable { get; set; }
+    public bool Asc { get; set; } = true;
+    public string FieldToOrderBy { get; set; } = string.Empty;
 }
