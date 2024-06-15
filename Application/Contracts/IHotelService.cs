@@ -5,7 +5,7 @@ namespace Application.Contracts;
 
 public interface IHotelService
 {
-    IEnumerable<HotelDTO> GetFilteredHotels(Cities? city);
+    Task<IEnumerable<HotelDTO>> GetFilteredHotels(FiltersDTO filter);
     Task<HotelDTO> GetById(long hotelId);
     Task<bool> Create(NewHotelDTO newHotelInfo);
 }

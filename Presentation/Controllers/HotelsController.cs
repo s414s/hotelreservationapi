@@ -1,5 +1,6 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Domain.Entities;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,16 +22,17 @@ public class HotelsController : ControllerBase
     }
 
     /// <summary>
-    /// Gets filteres hotels
+    /// Gets filteres hotels with their rooms
     /// </summary>
     /// <returns></returns>
     [AllowAnonymous]
     [HttpGet()]
-    public ActionResult<IEnumerable<HotelDTO>> GetHotels([FromQuery] Cities? city)
+    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotels([FromQuery] Cities? city, bool? asc)
     {
         try
         {
-            return Ok(_hotelsService.GetFilteredHotels(city));
+            var filter = new FiltersDTO { Asc = asc ?? true, City = city, };
+            return Ok(await _hotelsService.GetFilteredHotels(filter));
         }
         catch (Exception ex)
         {
@@ -82,7 +84,7 @@ public class HotelsController : ControllerBase
     /// <summary>
     /// Creates a new hotel
     /// </summary>
-    /// <param name="hotelInfo"></param>
+    /// <param name="newHotelInfo"></param>
     /// <returns></returns>
     [HttpPost()]
     public async Task<ActionResult<bool>> CreateHotel([FromBody] NewHotelDTO newHotelInfo)

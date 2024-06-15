@@ -9,6 +9,7 @@ public class RoomDTO
     public int Storey { get; set; }
     public RoomTypes Type { get; set; }
     public int Capacity { get; set; }
+    public decimal Price { get; set; }
 
     public static RoomDTO MapFromDomainEntity(Room room)
     {
@@ -18,8 +19,9 @@ public class RoomDTO
             Storey = room.Storey,
             Type = room.Type,
             Capacity = room.GetCapacity(),
+            Price = room?.Price ?? 0,
         };
     }
 
-    public Room MapToDomainEntity() => new(Storey, Type);
+    public Room MapToDomainEntity() => new(Storey, Price, Type);
 }

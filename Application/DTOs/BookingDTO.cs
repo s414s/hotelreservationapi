@@ -7,6 +7,7 @@ public class BookingDTO
     public long Id { get; set; }
     public DateTime From { get; set; }
     public DateTime Until { get; set; }
+    public decimal TotalPrice { get; set; }
     public string HotelName { get; set; } = string.Empty;
     public List<GuestDTO> Guests { get; set; } = [];
 
@@ -19,6 +20,7 @@ public class BookingDTO
             Until = booking.End.ToDateTime(TimeOnly.Parse("10:00 AM")),
             Guests = booking.Guests?.Select(g => GuestDTO.MapFromDomainEntity(g)).ToList() ?? [],
             HotelName = booking.Room?.Hotel?.Name ?? string.Empty,
+            TotalPrice = booking.TotalPrice,
         };
     }
 

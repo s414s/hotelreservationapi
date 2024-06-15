@@ -14,5 +14,9 @@ public class NewRoomDTO
     [EnumDataType(typeof(RoomTypes), ErrorMessage = "Invalid room type value.")]
     public RoomTypes Type { get; set; }
 
-    public Room MapToDomainEntity() => new(Storey, Type);
+    [Required(ErrorMessage = "Price is required.")]
+    [Range(1, 500, ErrorMessage = "Price must be between 1 and 500.")]
+    public decimal Price { get; set; }
+
+    public Room MapToDomainEntity() => new(Storey, Price, Type);
 }

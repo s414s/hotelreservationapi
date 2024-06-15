@@ -7,6 +7,7 @@ public class Room : Entity
 {
     public int Storey { get; set; }
     public RoomTypes Type { get; set; }
+    public decimal? Price { get; set; }
 
     // Navigation properties
     public long HotelId { get; set; }
@@ -14,14 +15,12 @@ public class Room : Entity
     public ICollection<Booking>? Bookings { get; set; }
 
     public Room() { }
-    public Room(int storey, RoomTypes type = RoomTypes.Single)
+    public Room(int storey, decimal price, RoomTypes type = RoomTypes.Single)
     {
         Storey = storey;
+        Price = price;
         Type = type;
     }
-
-    public bool IsAvailableBetweenDates(DateOnly start, DateOnly end)
-        => Bookings?.Any(x => x.Start >= start && x.End <= end) == false;
 
     public int GetCapacity() => Type == RoomTypes.Single ? 1 : 2;
 }

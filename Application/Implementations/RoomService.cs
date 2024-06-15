@@ -1,21 +1,16 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
 using Domain.Contracts;
+using Domain.DomainServices;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementations;
 
-public class RoomService : IRoomService
+public class RoomService(IRepository<Hotel> hotelsRepo, IRepository<Room> roomsRepo) : IRoomService
 {
-    private readonly IRepository<Hotel> _hotelsRepo;
-    private readonly IRepository<Room> _roomsRepo;
-
-    public RoomService(IRepository<Hotel> hotelsRepo, IRepository<Room> roomsRepo)
-    {
-        _hotelsRepo = hotelsRepo;
-        _roomsRepo = roomsRepo;
-    }
+    private readonly IRepository<Hotel> _hotelsRepo = hotelsRepo;
+    private readonly IRepository<Room> _roomsRepo = roomsRepo;
 
     public async Task<bool> CreateRoom(NewRoomDTO newRoom, long hotelId)
     {
@@ -55,7 +50,7 @@ public class RoomService : IRoomService
 
         if (filters.From is DateOnly from && filters.Until is DateOnly until)
         {
-            rooms = rooms.Where(x => x.IsAvailableBetweenDates(from, until)).ToList();
+            rooms = rooms.Where(r => AvailabilityService.IsRoomAvailableBetweenDates(r, from, until)).ToList();
         }
 
         return rooms.Select(x => RoomDTO.MapFromDomainEntity(x));
@@ -68,6 +63,7 @@ public class RoomService : IRoomService
 
         room.Storey = updatedRoom.Storey;
         room.Type = updatedRoom.Type;
+        room.Price = updatedRoom.Price;
 
         return await _roomsRepo.Update(room);
     }
