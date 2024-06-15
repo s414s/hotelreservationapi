@@ -6,6 +6,7 @@ public class Booking : Entity
 {
     public DateOnly Start { get; set; }
     public DateOnly End { get; set; }
+    public decimal TotalPrice { get; set; }
 
     // Navigation properties
     public long RoomId { get; set; }

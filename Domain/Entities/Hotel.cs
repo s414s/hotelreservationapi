@@ -1,12 +1,13 @@
 ﻿using Domain.Base;
+using Domain.DomainServices;
 using Domain.Enum;
 
 namespace Domain.Entities;
 
 public class Hotel : Entity
 {
-    public string Name { get; set; }
-    public string Address { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
     public Cities City { get; set; }
 
     // Navigation properties
@@ -21,9 +22,6 @@ public class Hotel : Entity
     }
 
     public IEnumerable<Room> GetAvailableRoomsBetweenDates(DateOnly start, DateOnly end)
-        => Rooms.Where(x => x.IsAvailableBetweenDates(start, end));
+        => Rooms.Where(x => AvailabilityService.IsRoomAvailableBetweenDates(x, start, end));
 
-    public int GetOccupationRatioOnDate(DateOnly date)
-        => Rooms.Where(x => !x.IsAvailableBetweenDates(date, date)).Count() / Rooms.Count();
 }
-
