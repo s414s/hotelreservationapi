@@ -11,7 +11,7 @@ public class NewHotelDTO
     public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Address is required.")]
-    [StringLength(20, ErrorMessage = "Address cannot be longer than 20 characters.")]
+    [StringLength(40, ErrorMessage = "Address cannot be longer than 40 characters.")]
     public string Address { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "City is required.")]

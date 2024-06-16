@@ -102,9 +102,10 @@ public class RoomsController : ControllerBase
     /// Update a Room
     /// </summary>
     /// <param name="roomId"></param>
+    /// <param name="updatedRoom"></param>
     /// <returns></returns>
     [HttpPut("{roomId}")]
-    public async Task<ActionResult<bool>> UpdateRoom(long roomId, [FromQuery] NewRoomDTO updatedRoom)
+    public async Task<ActionResult<bool>> UpdateRoom(long roomId, [FromBody] NewRoomDTO updatedRoom)
     {
         try
         {

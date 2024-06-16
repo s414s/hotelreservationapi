@@ -2,9 +2,7 @@
 using Application.DTOs;
 using Domain.Contracts;
 using Domain.Entities;
-using Domain.Enum;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Implementations;
 
@@ -44,7 +42,6 @@ public class HotelService(IRepository<Hotel> hotelsRepo) : IHotelService
 
     public async Task<bool> Create(NewHotelDTO newHotelInfo)
     {
-        await _hotelsRepo.Add(newHotelInfo.MapToDomainEntity());
-        return await _hotelsRepo.SaveChanges();
+        return await _hotelsRepo.Add(newHotelInfo.MapToDomainEntity());
     }
 }
