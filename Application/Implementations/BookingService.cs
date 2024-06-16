@@ -42,9 +42,6 @@ public class BookingService(IRepository<Booking> bookingsRepo, IRepository<Room>
 
     public async Task<IEnumerable<BookingDTO>> GetFilteredBookings(FiltersDTO filters)
     {
-        //var startDateTime = filters.From?.Date + TimeOnly.MinValue.ToTimeSpan();
-        //var endDateTime = filters.Until?.Date + TimeOnly.MaxValue.ToTimeSpan();
-
         var sortProperty = filters.FieldToOrderBy == string.Empty ? "HotelName" : filters.FieldToOrderBy;
 
         var prop = typeof(BookingDTO).GetProperty(sortProperty)

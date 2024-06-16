@@ -20,8 +20,7 @@ public class RoomService(IRepository<Hotel> hotelsRepo, IRepository<Room> roomsR
         var room = newRoom.MapToDomainEntity();
         room.HotelId = hotel.Id;
 
-        await _roomsRepo.Add(room);
-        return await _roomsRepo.SaveChanges();
+        return await _roomsRepo.Add(room);
     }
 
     public async Task<bool> DeleteRoom(long roomId)
@@ -29,8 +28,7 @@ public class RoomService(IRepository<Hotel> hotelsRepo, IRepository<Room> roomsR
         var room = await _roomsRepo.GetByID(roomId)
             ?? throw new ApplicationException("the room does not exist");
 
-        await _roomsRepo.Delete(room.Id);
-        return await _roomsRepo.SaveChanges();
+        return await _roomsRepo.Delete(room.Id);
     }
 
     public async Task<RoomDTO> GetById(long roomId)
