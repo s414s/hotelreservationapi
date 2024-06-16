@@ -6,10 +6,14 @@ public class FiltersDTO
 {
     public DateOnly? From { get; set; }
     public DateOnly? Until { get; set; }
-    public Cities? City { get; set; }
     public long? HotelId { get; set; }
     public long? RoomId { get; set; }
     public long? ClientId { get; set; }
     public string? GuestDNI { get; set; }
     public bool? IsAvailable { get; set; }
+    public bool Asc { get; set; } = true;
+    public string FieldToOrderBy { get; set; } = string.Empty;
+    public Cities? City { get; set; }
+    public string? HotelName { get; set; }
+    public string? HotelAddress { get; set; }
 }

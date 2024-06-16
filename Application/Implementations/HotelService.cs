@@ -2,26 +2,30 @@
 using Application.DTOs;
 using Domain.Contracts;
 using Domain.Entities;
-using Domain.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementations;
 
-public class HotelService : IHotelService
+public class HotelService(IRepository<Hotel> hotelsRepo) : IHotelService
 {
-    private readonly IRepository<Hotel> _hotelsRepo;
+    private readonly IRepository<Hotel> _hotelsRepo = hotelsRepo;
 
-    public HotelService(IRepository<Hotel> hotelsRepo)
+    public async Task<IEnumerable<HotelDTO>> GetFilteredHotels(FiltersDTO filter)
     {
-        _hotelsRepo = hotelsRepo;
-    }
-
-    public IEnumerable<HotelDTO> GetFilteredHotels(Cities? city)
-    {
-        return _hotelsRepo.Query
+        var query = await _hotelsRepo.Query
             .Include(x => x.Rooms)
-            .Where(x => city == null || x.City == city)
-            .Select(x => HotelDTO.MapFromDomainEntity(x));
+            .Where(x => filter.City == null || x.City == filter.City)
+            .Select(x => HotelDTO.MapFromDomainEntity(x))
+            .ToListAsync();
+
+        if (filter.City is not null)
+        {
+            return query;
+        }
+
+        return filter.Asc
+            ? query.OrderBy(x => x.City)
+            : query.OrderByDescending(x => x.City);
     }
 
     public async Task<HotelDTO> GetById(long hotelId)
@@ -36,9 +40,8 @@ public class HotelService : IHotelService
         return HotelDTO.MapFromDomainEntity(hotel);
     }
 
-    public async Task<bool> Create(HotelDTO newHotelInfo)
+    public async Task<bool> Create(NewHotelDTO newHotelInfo)
     {
-        await _hotelsRepo.Add(newHotelInfo.MapToDomainEntity());
-        return await _hotelsRepo.SaveChanges();
+        return await _hotelsRepo.Add(newHotelInfo.MapToDomainEntity());
     }
 }

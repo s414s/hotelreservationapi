@@ -1,9 +1,9 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
+using Domain.Entities;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
@@ -22,17 +22,17 @@ public class HotelsController : ControllerBase
     }
 
     /// <summary>
-    /// Gets filteres hotels
+    /// Gets filteres hotels with their rooms
     /// </summary>
     /// <returns></returns>
-    //[Authorize(Roles = "User")]
-    //[Authorize]
+    [AllowAnonymous]
     [HttpGet()]
-    public ActionResult<IEnumerable<HotelDTO>> GetHotels([FromQuery] Cities? city)
+    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotels([FromQuery] Cities? city, bool? asc)
     {
         try
         {
-            return Ok(_hotelsService.GetFilteredHotels(city));
+            var filter = new FiltersDTO { Asc = asc ?? true, City = city, };
+            return Ok(await _hotelsService.GetFilteredHotels(filter));
         }
         catch (Exception ex)
         {
@@ -46,6 +46,7 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <param name="hotelId"></param>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpGet("{hotelId}/Rooms")]
     public async Task<ActionResult<HotelDTO>> GetHotelWithRooms(long hotelId)
     {
@@ -65,8 +66,9 @@ public class HotelsController : ControllerBase
     /// </summary>
     /// <param name="hotelId"></param>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpGet("{hotelId}")]
-    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotelsAsync(long hotelId)
+    public async Task<ActionResult<IEnumerable<HotelDTO>>> GetHotels(long hotelId)
     {
         try
         {
@@ -82,14 +84,18 @@ public class HotelsController : ControllerBase
     /// <summary>
     /// Creates a new hotel
     /// </summary>
-    /// <param name="hotelInfo"></param>
+    /// <param name="newHotelInfo"></param>
     /// <returns></returns>
     [HttpPost()]
-    public async Task<ActionResult<bool>> CreateHotel([FromBody] HotelDTO hotelInfo)
+    public async Task<ActionResult<bool>> CreateHotel([FromBody] NewHotelDTO newHotelInfo)
     {
         try
         {
-            return Ok(await _hotelsService.Create(hotelInfo));
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok(await _hotelsService.Create(newHotelInfo));
         }
         catch (Exception ex)
         {

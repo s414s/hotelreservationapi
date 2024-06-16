@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240615171123_AddPriceField")]
+    partial class AddPriceField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +156,6 @@ namespace Infrastructure.Persistence.Migrations
                         {
                             Id = 1L,
                             HotelId = 1L,
-                            Price = 30m,
                             Storey = 1,
                             Type = "Single"
                         },
@@ -161,7 +163,6 @@ namespace Infrastructure.Persistence.Migrations
                         {
                             Id = 2L,
                             HotelId = 1L,
-                            Price = 30m,
                             Storey = 1,
                             Type = "Single"
                         },
@@ -169,7 +170,6 @@ namespace Infrastructure.Persistence.Migrations
                         {
                             Id = 3L,
                             HotelId = 1L,
-                            Price = 30m,
                             Storey = 1,
                             Type = "Double"
                         },
@@ -177,7 +177,6 @@ namespace Infrastructure.Persistence.Migrations
                         {
                             Id = 4L,
                             HotelId = 1L,
-                            Price = 30m,
                             Storey = 1,
                             Type = "Double"
                         },
@@ -185,7 +184,6 @@ namespace Infrastructure.Persistence.Migrations
                         {
                             Id = 5L,
                             HotelId = 2L,
-                            Price = 30m,
                             Storey = 1,
                             Type = "Single"
                         },
@@ -193,7 +191,6 @@ namespace Infrastructure.Persistence.Migrations
                         {
                             Id = 6L,
                             HotelId = 2L,
-                            Price = 30m,
                             Storey = 1,
                             Type = "Single"
                         },
@@ -201,7 +198,6 @@ namespace Infrastructure.Persistence.Migrations
                         {
                             Id = 7L,
                             HotelId = 2L,
-                            Price = 30m,
                             Storey = 1,
                             Type = "Double"
                         },
@@ -209,7 +205,6 @@ namespace Infrastructure.Persistence.Migrations
                         {
                             Id = 8L,
                             HotelId = 2L,
-                            Price = 30m,
                             Storey = 1,
                             Type = "Suite"
                         });

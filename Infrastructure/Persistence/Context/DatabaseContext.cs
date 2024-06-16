@@ -52,15 +52,15 @@ public class DatabaseContext : DbContext
             ]);
 
         modelBuilder.Entity<Room>().HasData([
-            new Room{ Id = 1, Storey = 1, Type = RoomTypes.Single, HotelId = 1 },
-            new Room{ Id = 2, Storey = 1, Type = RoomTypes.Single, HotelId = 1 },
-            new Room{ Id = 3, Storey = 1, Type = RoomTypes.Double, HotelId = 1 },
-            new Room{ Id = 4, Storey = 1, Type = RoomTypes.Double, HotelId = 1 },
+            new Room{ Id = 1, Storey = 1, Type = RoomTypes.Single, HotelId = 1, Price = 30 },
+            new Room{ Id = 2, Storey = 1, Type = RoomTypes.Single, HotelId = 1, Price = 30 },
+            new Room{ Id = 3, Storey = 1, Type = RoomTypes.Double, HotelId = 1, Price = 30 },
+            new Room{ Id = 4, Storey = 1, Type = RoomTypes.Double, HotelId = 1, Price = 30 },
 
-            new Room{ Id = 5, Storey = 1, Type = RoomTypes.Single, HotelId = 2 },
-            new Room{ Id = 6, Storey = 1, Type = RoomTypes.Single, HotelId = 2 },
-            new Room{ Id = 7, Storey = 1, Type = RoomTypes.Double, HotelId = 2 },
-            new Room{ Id = 8, Storey = 1, Type = RoomTypes.Suite, HotelId = 2 },
+            new Room{ Id = 5, Storey = 1, Type = RoomTypes.Single, HotelId = 2, Price = 30 },
+            new Room{ Id = 6, Storey = 1, Type = RoomTypes.Single, HotelId = 2, Price = 30 },
+            new Room{ Id = 7, Storey = 1, Type = RoomTypes.Double, HotelId = 2, Price = 30 },
+            new Room{ Id = 8, Storey = 1, Type = RoomTypes.Suite, HotelId = 2, Price = 30 },
             ]);
 
         //base.OnModelCreating(modelBuilder);

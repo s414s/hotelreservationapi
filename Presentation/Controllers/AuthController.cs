@@ -1,9 +1,7 @@
 ﻿using Application.Contracts;
 using Application.DTOs;
-using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Presentation.Middlewares;
 
 namespace Presentation.Controllers;
 
@@ -13,7 +11,6 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<AuthController> _logger;
 
     public AuthController(
         IAuthService authService,
@@ -22,7 +19,6 @@ public class AuthController : ControllerBase
     {
         _authService = authService;
         _httpContextAccessor = httpContextAccessor;
-        _logger = logger;
     }
 
     /// <summary>
@@ -54,6 +50,10 @@ public class AuthController : ControllerBase
     {
         try
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var jwtToken = await _authService.Login(loginInfo);
             _httpContextAccessor.HttpContext.Response.Headers.Add("Authorization", $"bearer {jwtToken}");
             _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", jwtToken, new CookieOptions { HttpOnly = true });
@@ -87,6 +87,10 @@ public class AuthController : ControllerBase
     {
         try
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             _authService.SignUp(signupInfo);
             return Ok(true);
         }
